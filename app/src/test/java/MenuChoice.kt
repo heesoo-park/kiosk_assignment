@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter
 
 fun main(){
     val order = Order()
+    val menuUI = MenuUI()
     //코루틴을 사용해서 비동기적으로 메서드 실행
     GlobalScope.launch {
         order.waitingOrder()
@@ -17,117 +18,47 @@ fun main(){
         Thread.sleep(3000)
         println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.")
         println()
-        println("[ MOM'S TOUCH ]")
-        println("1. Burgers     | 햄버거")
-        println("2. Chickens    | 치킨")
-        println("3. Drinks      | 음료")
-        println("4. SideMenu    | 사이드메뉴")
-        println("0. 종료         | 프로그램 종료")
+        //메인 메뉴판 불러오기
+        menuUI.mainMenu()
         if(order.myOrders.isNotEmpty()){
-            println("[ ORDER MENU ]")
-            println("5. Order     | 장바구니를 확인 후 주문합니다.")
-            println("6. Cancle    | 진행중인 주문을 취소합니다.")
-            println("7. Coupon    | 할인권 발급하기.")
+            menuUI.subMenu()
         }
 
         val mainChoice = choiceNumber("mainChoice").toString().toInt()
         when(mainChoice){
             1 -> {
-                println("[ Bergers Menu ]")
-                println("1. 싸이버거       | W4,600 | 바삭하고 매콤한 치킨 패티와 신선한 양상추가 조화를 이루는 맘스터치 시그니처 버거.")
-                println("2. 인크레더블버거  | W5,700 | 프리미엄 더블햄, 에그프라이, 통다리살 패티에 아삭아삭한 양상추와 양파까지, 풍성한 버거.")
-                println("3. 화이트갈릭버거  | W5,200 | BEST 화이트갈릭이 싸이버거로 재탄생! 더블햄, 통다리살, 화이트갈릭소스의 환상 조합")
-                println("0. 뒤로가기       | 뒤로가기")
+                menuUI.burgerMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
                 when(otherChoice){
-                    1-> {
-                        val burger = Burger("싸이버거", 4600, "바삭하고 매콤한 치킨 패티와 신선한 양상추가 조화를 이루는 맘스터치 시그니처 버거.")
-                        burger.displayInfo()
+                    in 1..MenuInfo.burgerInfo.size-> {
+                        MenuInfo.burgerInfo[otherChoice-1].displayInfo()
+                        intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
                         when(orderOrCancle){
                             1 -> {
-                                order.addOrder("싸이버거", 4600, "바삭하고 매콤한 치킨 패티와 신선한 양상추가 조화를 이루는 맘스터치 시그니처 버거.")
-                                println("주문목록에 ${burger.name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.burgerInfo[otherChoice -1])
+                                println("주문목록에 ${MenuInfo.burgerInfo[otherChoice-1].name}를 추가했습니다.")
                             }
                             else -> {
                                 println("취소")
                             }
                         }
                     }
-                    2-> {
-                        val burger = Burger("인크레더블버거", 5700, "프리미엄 더블햄, 에그프라이, 통다리살 패티에 아삭아삭한 양상추와 양파까지, 풍성한 버거.")
-                        burger.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("인크레더블버거", 5700, "프리미엄 더블햄, 에그프라이, 통다리살 패티에 아삭아삭한 양상추와 양파까지, 풍성한 버거.")
-                                println("주문목록에 ${burger.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    3-> {
-                        val burger = Burger("화이트갈릭버거", 5200, "BEST 화이트갈릭이 싸이버거로 재탄생! 더블햄, 통다리살, 화이트갈릭소스의 환상 조합")
-                        burger.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("화이트갈릭버거", 5200, "BEST 화이트갈릭이 싸이버거로 재탄생! 더블햄, 통다리살, 화이트갈릭소스의 환상 조합")
-                                println("주문목록에 ${burger.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
+                    else -> {println("뒤로가기")}
                 }
             }
             2 -> {
-                println("[ Chickens Menu ]")
-                println("1. 후라이드      | W11,900 | 케이준 양념레시피로 더 바삭하고 스파이시한 치킨")
-                println("2. 간장마늘      | W13,900 | 알싸한 마늘 향의 매콤함, 특제 간장소스의 단짠이 조화로운 치킨")
-                println("3. 맘스양념      | W13,900 | 국내산 벌꿀이 함유된 매콤달콤 특제 양념소스로 꿀맛나는 치킨")
-                println("0. 뒤로가기      | 뒤로가기")
+                menuUI.chickenMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
                 when(otherChoice){
-                    1-> {
-                        val chicken = Chicken("후라이드", 11900, "케이준 양념레시피로 더 바삭하고 스파이시한 치킨")
-                        chicken.displayInfo()
+                    in 1..MenuInfo.chickenInfo.size-> {
+                        MenuInfo.chickenInfo[otherChoice-1].displayInfo()
+                        intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
                         when(orderOrCancle){
                             1 -> {
-                                order.addOrder("후라이드", 11900, "케이준 양념레시피로 더 바삭하고 스파이시한 치킨")
-                                println("주문목록에 ${chicken.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    2-> {
-                        val chicken = Chicken("간장마늘", 13900, "알싸한 마늘 향의 매콤함, 특제 간장소스의 단짠이 조화로운 치킨")
-                        chicken.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("간장마늘", 13900, "알싸한 마늘 향의 매콤함, 특제 간장소스의 단짠이 조화로운 치킨")
-                                println("주문목록에 ${chicken.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    3-> {
-                        val chicken = Chicken("맘스양념", 13900, "국내산 벌꿀이 함유된 매콤달콤 특제 양념소스로 꿀맛나는 치킨")
-                        chicken.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("맘스양념", 13900, "국내산 벌꿀이 함유된 매콤달콤 특제 양념소스로 꿀맛나는 치킨")
-                                println("주문목록에 ${chicken.name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.chickenInfo[otherChoice-1])
+                                println("주문목록에 ${MenuInfo.chickenInfo[otherChoice-1].name}를 추가했습니다.")
                             }
                             else -> {
                                 println("취소")
@@ -138,49 +69,17 @@ fun main(){
                 }
             }
             3 -> {
-                println("[ Drinks Menu ]")
-                println("1. 콜라     | W1,600 |     톡쏘는 콜라")
-                println("2. 사이다   | W1,600 |     톡쏘는 사이다")
-                println("3. 제로콜라  | W1,600 |     톡쏘는 제로콜라")
-                println("0. 뒤로가기")
+                menuUI.drinkMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
                 when(otherChoice){
-                    1-> {
-                        val drink = Drink("콜라", 1600, "톡쏘는 콜라")
-                        drink.displayInfo()
+                    in 1.. MenuInfo.drinkInfo.size-> {
+                        MenuInfo.drinkInfo[otherChoice-1].displayInfo()
+                        intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
                         when(orderOrCancle){
                             1 -> {
-                                order.addOrder("콜라", 1600, "톡쏘는 콜라")
-                                println("주문목록에 ${drink.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    2-> {
-                        val drink = Drink("사이다", 1600, "톡쏘는 사이다")
-                        drink.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("사이다", 1600, "톡쏘는 사이다")
-                                println("주문목록에 ${drink.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    3-> {
-                        val drink = Drink("제로콜라", 1600, "톡쏘는 제로콜라")
-                        drink.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("제로콜라", 1600, "톡쏘는 제로콜라")
-                                println("주문목록에 ${drink.name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.drinkInfo[otherChoice-1])
+                                println("주문목록에 ${MenuInfo.drinkInfo[otherChoice-1].name}를 추가했습니다.")
                             }
                             else -> {
                                 println("취소")
@@ -191,49 +90,17 @@ fun main(){
                 }
             }
             4 -> {
-                println("[ Side Menu ]")
-                println("1. 치즈스틱     | W2,000 |    치즈가 듬뿍 들어간 치즈스틱")
-                println("2. 양념감자     | W2,000 |    감자에 섞어먹는 양념")
-                println("3. 할라피뇨너겟  | W2,000 |    맛있는 너겟")
-                println("0. 뒤로가기")
+                menuUI.sideMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
                 when(otherChoice){
-                    1-> {
-                        val side = Side("치즈스틱", 2000, "치즈가 듬뿍 들어간 치즈스틱")
-                        side.displayInfo()
+                    in 1 .. MenuInfo.sideInfo.size-> {
+                        MenuInfo.sideInfo[otherChoice-1].displayInfo()
+                        intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
                         when(orderOrCancle){
                             1 -> {
-                                order.addOrder("치즈스틱", 2000, "치즈가 듬뿍 들어간 치즈스틱")
-                                println("주문목록에 ${side.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    2-> {
-                        val side = Side("양념감자", 2000, "감자에 섞어먹는 양념")
-                        side.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("양념감자", 2000, "감자에 섞어먹는 양념")
-                                println("주문목록에 ${side.name}를 추가했습니다.")
-                            }
-                            else -> {
-                                println("취소")
-                            }
-                        }
-                    }
-                    3-> {
-                        val side = Side("할라피뇨너겟", 2000, "맛있는 너겟")
-                        side.displayInfo()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
-                            1 -> {
-                                order.addOrder("할라피뇨너겟", 2000, "맛있는 너겟")
-                                println("주문목록에 ${side.name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.sideInfo[otherChoice-1])
+                                println("주문목록에 ${MenuInfo.sideInfo[otherChoice-1].name}를 추가했습니다.")
                             }
                             else -> {
                                 println("취소")
@@ -257,9 +124,9 @@ fun main(){
 
                         val formatter1 = DateTimeFormatter.ofPattern("HH시mm분")
                         val formattedcurrentTime1 = currentTime.format(formatter1)
-                        if(formattedcurrentTime > 1445 && formattedcurrentTime < 1500){
+                        if(formattedcurrentTime > 1730 && formattedcurrentTime < 1750){
                             println("현재 시각은 $formattedcurrentTime1 입니다.")
-                            println("은행 점검 시간은 14시45분 ~ 15시 00분 이므로 결제할 수 없습니다.")
+                            println("은행 점검 시간은 17시30분 ~ 17시 50분 이므로 결제할 수 없습니다.")
                         }else{
                             order.isMyMoneyOk()
                         }
@@ -345,4 +212,8 @@ fun choiceNumber(type:String): Int{
         }
         else -> {return 0}
     }
+}
+fun intoOrder(){
+    println("위 메뉴를 장바구니에 추가하시겠습니까?")
+    println("1. 확인       2. 취소")
 }

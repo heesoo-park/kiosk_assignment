@@ -1,3 +1,4 @@
+import android.content.ClipData.Item
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -16,10 +17,10 @@ class Order(){
     private var priceSum = 0
     private var orderCount = 0
     public var coupon = 0
-    //주문 추가 총가격은 굳이 미리 계산하지 않고, 장바구니를 확인할때 계산.
-    fun addOrder(name: String, price: Int, description: String) {
 
-        val myOrder = MyOrder(name, price, description, myMoney, priceSum)
+    //주문 추가 총가격은 굳이 미리 계산하지 않고, 장바구니를 확인할때 계산.
+    fun addOrder(selectedMenu : Menu) {
+        val myOrder = MyOrder(selectedMenu.name, selectedMenu.price, selectedMenu.description, myMoney, priceSum)
         myOrders.add(myOrder)
     }
 
