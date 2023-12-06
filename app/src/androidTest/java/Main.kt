@@ -7,20 +7,22 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
-fun isInteger(s: String): Boolean {
-    return try {
-        s.toInt()
-        true
-    } catch (e: Exception) {
-        false
-    }
-}
-
-
-fun isInOption(s: String, start: Int, end: Int): Boolean {
-    return s.toInt() in start..end
-}
+// 쓰지 않게된 함수들
+//fun isInteger(s: String): Boolean {
+//    return try {
+//        s.toInt()
+//        true
+//    } catch (e: Exception) {
+//        false
+//    }
+//}
+//
+//fun isInOption(s: String, start: Int, end: Int): Boolean {
+//    return s.toInt() in start..end
+//}
 
 @OptIn(DelicateCoroutinesApi::class)
 fun waitTime() {
@@ -34,15 +36,16 @@ fun waitTime() {
 @OptIn(DelicateCoroutinesApi::class)
 fun main() {
     val menuUI = MenuUI()
-    val orderReceipt = OrderReceipt()
+    var orderReceipt = OrderReceipt()
     val proceedingOrderList = mutableListOf<OrderReceipt>()
     var currentMoney = (30000..50000).random()
+    var coupon = false
 
     GlobalScope.launch {
         while (true) {
             delay(5000)
-            if (proceedingOrderList.isNotEmpty()) println("\n(현재 주문 대기수 : ${proceedingOrderList.size})")
-            else println("\n(현재 주문 대기수 : 0)")
+            if (proceedingOrderList.isNotEmpty()) println("(현재 주문 대기수 : ${proceedingOrderList.size})")
+            else println("(현재 주문 대기수 : 0)")
         }
     }
 
@@ -55,60 +58,43 @@ fun main() {
         }
 
         val menu = readln()
-        if (!isInteger(menu)) {
-            System.err.println("메뉴 입력은 숫자만 가능합니다.")
-            continue
-        }
-
-        if (!isInOption(menu, 0, 4) && orderReceipt.orderReceipt.isEmpty() && proceedingOrderList.isEmpty()) {
-            System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-            continue
-        } else if (!isInOption(menu, 0, 6)) {
-            if (proceedingOrderList.isEmpty()) {
-                System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                continue
-            }
-        }
-// toIntOrNull 함수로 교체 + 엘비스 연산자 (-1)
-        when (menu.toInt()) {
+        when (menu.toIntOrNull() ?: -1) {
             0 -> break
             1 -> {
                 while (true) {
                     menuUI.bergerMenu()
 
                     val selectedBurger = readln()
-                    if (!isInteger(selectedBurger)) {
-                        System.err.println("메뉴 입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    when (selectedBurger.toInt()) {
+                    when (selectedBurger.toIntOrNull() ?: -1) {
                         0 -> break
                         in 1..burgerInfo.size -> {
-                            burgerInfo[selectedBurger.toInt() - 1].displayInfo()
-                            println("위 메뉴를 장바구니에 추가하시겠습니까?")
-                            println("1. 확인\t 2. 취소")
-                            val check = readln()
+                            while (true) {
+                                burgerInfo[selectedBurger.toInt() - 1].displayInfo()
+                                println("위 메뉴를 장바구니에 추가하시겠습니까?")
+                                println("1. 확인\t 2. 취소")
 
-                            if (!isInteger(check)) {
-                                System.err.println("입력은 숫자만 가능합니다.")
-                            } else if (!isInOption(check, 1, 2)) {
-                                System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                            }
-
-                            when (check.toInt()) {
-                                1 -> {
-                                    orderReceipt.addMenu(burgerInfo[selectedBurger.toInt() - 1])
-                                    println("${burgerInfo[selectedBurger.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
-
-                                    waitTime()
-                                    break
-                                }
-                                2 -> {
-                                    println("처음화면으로 돌아갑니다.\n")
-                                    break
+                                val check = readln()
+                                when (check.toIntOrNull() ?: -1) {
+                                    1 -> {
+                                        orderReceipt.addMenu(burgerInfo[selectedBurger.toInt() - 1])
+                                        println("${burgerInfo[selectedBurger.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
+                                        break
+                                    }
+                                    2 -> {
+                                        println("처음화면으로 돌아갑니다.\n")
+                                        break
+                                    }
+                                    else -> {
+                                        println("잘못된 입력입니다 다시 입력해주세요.")
+                                    }
                                 }
                             }
+
+                            waitTime()
+                            break
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
                         }
                     }
                 }
@@ -118,38 +104,36 @@ fun main() {
                     menuUI.chickenMenu()
 
                     val selectedChicken = readln()
-                    if (!isInteger(selectedChicken)) {
-                        System.err.println("메뉴 입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    when (selectedChicken.toInt()) {
+                    when (selectedChicken.toIntOrNull() ?: -1) {
                         0 -> break
                         in 1..chickenInfo.size -> {
-                            chickenInfo[selectedChicken.toInt() - 1].displayInfo()
-                            println("위 메뉴를 장바구니에 추가하시겠습니까?")
-                            println("1. 확인\t 2. 취소")
-                            val check = readln()
+                            while (true) {
+                                chickenInfo[selectedChicken.toInt() - 1].displayInfo()
+                                println("위 메뉴를 장바구니에 추가하시겠습니까?")
+                                println("1. 확인\t 2. 취소")
 
-                            if (!isInteger(check)) {
-                                System.err.println("입력은 숫자만 가능합니다.")
-                            } else if (!isInOption(check, 1, 2)) {
-                                System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                            }
-
-                            when (check.toInt()) {
-                                1 -> {
-                                    orderReceipt.addMenu(chickenInfo[selectedChicken.toInt() - 1])
-                                    println("${chickenInfo[selectedChicken.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
-
-                                    waitTime()
-                                    break
-                                }
-                                2 -> {
-                                    println("처음화면으로 돌아갑니다.\n")
-                                    break
+                                val check = readln()
+                                when (check.toIntOrNull() ?: -1) {
+                                    1 -> {
+                                        orderReceipt.addMenu(chickenInfo[selectedChicken.toInt() - 1])
+                                        println("${chickenInfo[selectedChicken.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
+                                        break
+                                    }
+                                    2 -> {
+                                        println("처음화면으로 돌아갑니다.\n")
+                                        break
+                                    }
+                                    else -> {
+                                        println("잘못된 입력입니다 다시 입력해주세요.")
+                                    }
                                 }
                             }
+
+                            waitTime()
+                            break
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
                         }
                     }
                 }
@@ -159,38 +143,36 @@ fun main() {
                     menuUI.drinkMenu()
 
                     val selectedDrink = readln()
-                    if (!isInteger(selectedDrink)) {
-                        System.err.println("메뉴 입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    when (selectedDrink.toInt()) {
+                    when (selectedDrink.toIntOrNull() ?: -1) {
                         0 -> break
                         in 1..drinkInfo.size -> {
-                            drinkInfo[selectedDrink.toInt() - 1].displayInfo()
-                            println("위 메뉴를 장바구니에 추가하시겠습니까?")
-                            println("1. 확인\t 2. 취소")
-                            val check = readln()
+                            while (true) {
+                                drinkInfo[selectedDrink.toInt() - 1].displayInfo()
+                                println("위 메뉴를 장바구니에 추가하시겠습니까?")
+                                println("1. 확인\t 2. 취소")
 
-                            if (!isInteger(check)) {
-                                System.err.println("입력은 숫자만 가능합니다.")
-                            } else if (!isInOption(check, 1, 2)) {
-                                System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                            }
-
-                            when (check.toInt()) {
-                                1 -> {
-                                    orderReceipt.addMenu(drinkInfo[selectedDrink.toInt() - 1])
-                                    println("${drinkInfo[selectedDrink.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
-
-                                    waitTime()
-                                    break
-                                }
-                                2 -> {
-                                    println("처음화면으로 돌아갑니다.\n")
-                                    break
+                                val check = readln()
+                                when (check.toIntOrNull() ?: -1) {
+                                    1 -> {
+                                        orderReceipt.addMenu(drinkInfo[selectedDrink.toInt() - 1])
+                                        println("${drinkInfo[selectedDrink.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
+                                        break
+                                    }
+                                    2 -> {
+                                        println("처음화면으로 돌아갑니다.\n")
+                                        break
+                                    }
+                                    else -> {
+                                        println("잘못된 입력입니다 다시 입력해주세요.")
+                                    }
                                 }
                             }
+
+                            waitTime()
+                            break
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
                         }
                     }
                 }
@@ -200,79 +182,89 @@ fun main() {
                     menuUI.sideMenu()
 
                     val selectedSide = readln()
-                    if (!isInteger(selectedSide)) {
-                        System.err.println("메뉴 입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    when (selectedSide.toInt()) {
+                    when (selectedSide.toIntOrNull() ?: -1) {
                         0 -> break
                         in 1..sideInfo.size -> {
-                            sideInfo[selectedSide.toInt() - 1].displayInfo()
-                            println("위 메뉴를 장바구니에 추가하시겠습니까?")
-                            println("1. 확인\t 2. 취소")
-                            val check = readln()
+                            while (true) {
+                                sideInfo[selectedSide.toInt() - 1].displayInfo()
+                                println("위 메뉴를 장바구니에 추가하시겠습니까?")
+                                println("1. 확인\t 2. 취소")
 
-                            if (!isInteger(check)) {
-                                System.err.println("입력은 숫자만 가능합니다.")
-                            } else if (!isInOption(check, 1, 2)) {
-                                System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                            }
-
-                            when (check.toInt()) {
-                                1 -> {
-                                    orderReceipt.addMenu(sideInfo[selectedSide.toInt() - 1])
-                                    println("${sideInfo[selectedSide.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
-
-                                    waitTime()
-                                    break
-                                }
-                                2 -> {
-                                    println("처음화면으로 돌아갑니다.\n")
-                                    break
+                                val check = readln()
+                                when (check.toIntOrNull() ?: -1) {
+                                    1 -> {
+                                        orderReceipt.addMenu(sideInfo[selectedSide.toInt() - 1])
+                                        println("${sideInfo[selectedSide.toInt() - 1].name}가 장바구니에 추가되었습니다.\n")
+                                        break
+                                    }
+                                    2 -> {
+                                        println("처음화면으로 돌아갑니다.\n")
+                                        break
+                                    }
+                                    else -> {
+                                        println("잘못된 입력입니다 다시 입력해주세요.")
+                                    }
                                 }
                             }
+
+                            waitTime()
+                            break
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
                         }
                     }
                 }
             }
             5 -> {
                 while (true) {
+                    if (orderReceipt.orderReceipt.isEmpty()) {
+                        println("주문 내역이 없습니다.")
+
+                        waitTime()
+                        break
+                    }
+
                     println("아래와 같이 주문 하시겠습니까?")
                     orderReceipt.printOrders()
                     println("1. 주문\t 2. 메뉴판")
 
                     val selectedOption = readln()
-                    if (!isInteger(selectedOption)) {
-                        System.err.println("메뉴 입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    if (!isInOption(selectedOption, 1, 2)) {
-                        System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                        continue
-                    }
-
-                    when (selectedOption.toInt()) {
+                    when (selectedOption.toIntOrNull() ?: -1) {
                         1 -> {
-                            if (currentMoney >= orderReceipt.sum) {
-                                currentMoney -= orderReceipt.sum
-                                println("주문이 완료되었습니다.")
-                                println("남은 잔액은 ${currentMoney}원입니다.")
-                                val receipt = mutableListOf<Order>()
-                                orderReceipt.orderReceipt.forEach {
-                                    receipt.add(it)
-                                }
-                                val totalSum = orderReceipt.sum
-                                proceedingOrderList.add(OrderReceipt(receipt, totalSum))
-                                orderReceipt.clearOrders()
+                            if (checkInspectionTime()) {
+                                println("은행 점검 시간은 오후11시 10분 ~ 오후 11시 20분이므로 결제할 수 없습니다.\n")
                             } else {
-                                println("현재 잔액은 ${currentMoney}원으로 ${orderReceipt.sum - currentMoney}원이 부족해서 주문할 수 없습니다.")
-                                println("장바구니를 유지합니다.")
+                                if (coupon && orderReceipt.sum >= 20000) {
+                                    println("\n쿠폰을 사용하시겠습니까?")
+                                    println("사용하기를 원한다면 1을 눌러주세요.")
+                                    val selectedUse = readln()
+                                    when (selectedUse.toIntOrNull() ?: -1) {
+                                        1 -> {
+                                            orderReceipt.sum = (orderReceipt.sum * 0.8).toInt()
+                                            coupon = false
+                                        }
+                                    }
+                                }
+
+                                if (currentMoney >= orderReceipt.sum) {
+                                    currentMoney -= orderReceipt.sum
+                                    println("주문이 완료되었습니다.")
+                                    println("남은 잔액은 ${currentMoney}원입니다.")
+                                    proceedingOrderList.add(orderReceipt)
+                                    orderReceipt = OrderReceipt()
+                                } else {
+                                    println("현재 잔액은 ${currentMoney}원으로 ${orderReceipt.sum - currentMoney}원이 부족해서 주문할 수 없습니다.")
+                                    println("장바구니를 유지합니다.")
+                                }
                             }
                         }
                         2 -> {
                             println("장바구니를 유지합니다.")
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
+                            continue
                         }
                     }
                     println("처음화면으로 돌아갑니다.\n")
@@ -285,6 +277,8 @@ fun main() {
                 while (true) {
                     if (proceedingOrderList.isEmpty()) {
                         println("취소할 주문이 없습니다.\n")
+
+                        waitTime()
                         break
                     }
                     println("취소할 주문을 선택해주세요.")
@@ -294,17 +288,7 @@ fun main() {
                     println("0. 뒤로가기")
 
                     val selectedOption = readln()
-                    if (!isInteger(selectedOption)) {
-                        System.err.println("입력은 숫자만 가능합니다.")
-                        continue
-                    }
-
-                    if (!isInOption(selectedOption, 0, proceedingOrderList.size)) {
-                        System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                        continue
-                    }
-
-                    when (selectedOption.toInt()) {
+                    when (selectedOption.toIntOrNull() ?: -1) {
                         0 -> break
                         in 1..proceedingOrderList.size -> {
                             while (true) {
@@ -312,31 +296,27 @@ fun main() {
                                 println("1. 확인\t 2. 취소")
 
                                 val check = readln()
-
-                                if (!isInteger(check)) {
-                                    System.err.println("입력은 숫자만 가능합니다.")
-                                    continue
-                                } else if (!isInOption(check, 1, 2)) {
-                                    System.err.println("잘못된 번호를 입력했어요 다시 입력해주세요.")
-                                    continue
-                                }
-
-                                when (check.toInt()) {
+                                when (check.toIntOrNull() ?: -1) {
                                     1 -> {
                                         println("[ 주문 ${selectedOption.toInt()} ]이 취소되었습니다.\n")
                                         println("${proceedingOrderList[selectedOption.toInt() - 1].sum}원이 환불되었습니다.\n")
                                         currentMoney += proceedingOrderList[selectedOption.toInt() - 1].sum
                                         proceedingOrderList.removeAt(selectedOption.toInt() - 1)
                                         println("현재 잔액 : ${currentMoney}원\n")
-
-                                        waitTime()
                                         break
                                     }
                                     2 -> {
                                         break
                                     }
+                                    else -> {
+                                        println("잘못된 입력입니다 다시 입력해주세요.")
+                                    }
                                 }
                             }
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
+                            continue
                         }
                     }
                     println("처음화면으로 돌아갑니다.\n")
@@ -345,7 +325,29 @@ fun main() {
                     break
                 }
             }
+            7 -> {
+                if (coupon) {
+                    println("이미 쿠폰을 발급받았습니다.")
+                } else {
+                    println("쿠폰이 발급되었습니다.")
+                    coupon = true
+                }
+
+                waitTime()
+            }
+            else -> {
+                println("잘못된 입력입니다 다시 입력해주세요.")
+            }
         }
     }
     println("프로그램을 종료합니다.")
+}
+
+fun checkInspectionTime(): Boolean {
+    val curTime = LocalTime.now()
+    val startInspectionTime = LocalTime.parse("11:10:00")
+    val endInspectionTime = LocalTime.parse("11:20:00")
+
+    println("현재 시각은 ${curTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))}입니다. ")
+    return curTime.isAfter(startInspectionTime) && curTime.isBefore(endInspectionTime)
 }

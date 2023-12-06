@@ -10,6 +10,7 @@ class MenuUI {
         println("2. 치킨\t | 다양한 치킨")
         println("3. 음료\t | 다양한 음료")
         println("4. 사이드\t | 다양한 사이드")
+        println("7. 쿠폰 발급\t | 주문금액이 20000원 이상일 때 사용가능한 쿠폰 발급")
         println("0. 종료\t | 프로그램 종료")
     }
 
