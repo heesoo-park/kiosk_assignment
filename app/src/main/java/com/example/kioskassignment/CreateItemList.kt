@@ -1,5 +1,7 @@
 package com.example.kioskassignment
 
+// 객체 리스트를 만들어 반환할 게 아니라, 뭔가 읽기 전용으로 만드는 쪽이 더 좋을듯. 오브젝트라든가.
+// 근데 아이템 객체는 전달할 때 복사되는 듯? 어레이리스트는 참조되더만.
 fun createBurgers(): ArrayList<Item> =
     arrayListOf(
         Item("싸이버거", 4600, "바삭하고 매콤한 치킨 패티와 신선한 양상추가 조화를 이루는 맘스터치 시그니처 버거"),
