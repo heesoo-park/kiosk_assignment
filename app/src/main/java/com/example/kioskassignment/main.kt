@@ -5,5 +5,5 @@ fun main() {
 }
 
 object Cashcard {
-    var money = 30000
+    var money = 60000
 }

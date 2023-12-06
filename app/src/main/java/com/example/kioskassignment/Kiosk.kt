@@ -204,23 +204,39 @@ class Kiosk {
             val s = readln()
             when (s.toIntOrNull() ?: -1) {
                 1 -> {
+                    if (isImpossibleTime()) {
+                        println("은행 점검 시간은 ${Mytime.timeHHmm(t1)} ~ ${Mytime.timeHHmm(t2)} 이므로 결제할 수 없습니다.")
+                        wait(3)
+                        break
+                    }
+
                     if (Cashcard.money < total) {
                         println("현재 잔액은 ${Cashcard.money}원으로 ${total - Cashcard.money}원이 부족해서 주문할 수 없습니다.")
                         // TODO: 주문 취소
                         println("처음부터 다시 시도해주십시오.")
                         basket.clear()
-                    } else {
-                        if (isImpossibleTime()) {
-                            println("은행 점검 시간은 ${Mytime.timeHHmm(t1)} ~ ${Mytime.timeHHmm(t2)} 이므로 결제할 수 없습니다.")
-                        } else {
-                            Cashcard.money -= total
-                            println("주문되었습니다. 현재 잔액은 ${Cashcard.money}원입니다.")
-                            println("(주문 시각: ${Mytime.nowDateTimeFormatted()})")
-                            // TODO: 주문 넘겨주는거 괜찮은가?
-                            orderList.add(basket)
-                            basket = ArrayList<Item>()
+                        wait(3)
+                        break
+                    }
+
+                    var discount = 1.0
+                    if (total >= 30000) {
+                        println("3만원 이상 결제 시 사용 가능한 90% 할인 쿠폰이 있습니다.")
+                        println("사용하시려면 1을 입력하세요.")
+                        if (readln().toIntOrNull() == 1) {
+                            discount = 0.1
+                            println("쿠폰이 적용되어 ${(total * discount).toInt()}원이 결제됩니다.")
                         }
                     }
+
+                    Cashcard.money -= (total * discount).toInt()
+                    println("주문되었습니다. 현재 잔액은 ${Cashcard.money}원입니다.")
+                    println("(주문 시각: ${Mytime.nowDateTimeFormatted()})")
+                    // TODO: 주문 넘겨주는거 괜찮은가?
+                    orderList.add(basket)
+                    basket = ArrayList<Item>()
+
+
                     wait(3)
                     break
                 }
