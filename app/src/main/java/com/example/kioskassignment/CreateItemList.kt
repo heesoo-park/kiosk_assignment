@@ -1,4 +1,7 @@
-package com.example.kioskcli
+package com.example.kioskassignment
+
+import com.example.kioskassignment.Item
+import com.example.kioskassignment.Kiosk
 
 fun Kiosk.createBurgers(): ArrayList<Item> =
     arrayListOf(

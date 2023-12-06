@@ -1,4 +1,4 @@
-package com.example.kioskcli
+package com.example.kioskassignment
 
 fun main() {
     Kiosk().run()

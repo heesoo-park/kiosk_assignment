@@ -1,4 +1,4 @@
-package com.example.kioskcli
+package com.example.kioskassignment
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +13,7 @@ class Kiosk {
     var basket = ArrayList<Item>()
     var orderList = ArrayList<ArrayList<Item>>()
     var job: Job
-    val t1 = Mytime.parseTime("00:10:00")
+    val t1 = Mytime.parseTime("23:30:00")
     val t2 = Mytime.parseTime("23:50:00")
 
     fun isImpossibleTime(): Boolean = Mytime.nowTime() in t1..t2

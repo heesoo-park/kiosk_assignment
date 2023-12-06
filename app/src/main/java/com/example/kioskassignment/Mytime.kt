@@ -1,4 +1,4 @@
-package com.example.kioskcli
+package com.example.kioskassignment
 
 import java.time.LocalDateTime
 import java.time.LocalTime
