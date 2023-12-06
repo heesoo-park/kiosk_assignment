@@ -13,6 +13,12 @@ class MenuUI {
         println("0. 종료\t | 프로그램 종료")
     }
 
+    fun orderMenu() {
+        println("[주문 메뉴 카테고리]")
+        println("5. 주문하기\t | 장바구니를 확인 후 주문합니다.")
+        println("6. 주문취소\t | 진행중인 주문을 취소합니다.")
+    }
+
     fun bergerMenu() {
         println("[버거 메뉴 카테고리]")
         burgerInfo.forEachIndexed { index, burger ->
