@@ -6,13 +6,17 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.math.round
+import kotlin.random.Random
 
 class Kiosk {
     var itemListList = ArrayList<ItemList>()
     var isTerminate = false
     var basket = ArrayList<Item>()
     var orderList = ArrayList<ArrayList<Item>>()
-    var job: Job
+    var deliveryList = ArrayList<DeliveryOrder>()
+    var jobCurrentOrderCount: Job
+    var jobRandomDelivery: Job
     val t1 = Mytime.parseTime("23:30:00")
     val t2 = Mytime.parseTime("23:50:00")
 
@@ -21,12 +25,38 @@ class Kiosk {
 
     init {
         initItemListList()
-        job = CoroutineScope(Dispatchers.Default).launch {
+        jobCurrentOrderCount = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 runBlocking {
-                    delay(5000)
+                    delay(5000L)
                 }
                 println("\t\t\t(현재 주문 대기수: ${orderList.size})")
+            }
+        }
+        // TODO: 배달 주문 요청은 외부에서 들어오는게 맞는데 그냥 작성.
+        jobRandomDelivery = CoroutineScope(Dispatchers.Default).launch {
+            while (true) {
+                runBlocking {
+                    delay(8500L + Random.nextLong(0, 1501L))
+                }
+                var flag = false
+                for (i in 1..Random.nextInt(3)) {  // n초마다 배달 주문 0~2개 랜덤으로 들어옴
+                    flag = true
+                    // 대한민국 위도: 33~43, 경도: 124~132
+                    val altitude = round(Random.nextDouble(33.0, 43.0) * 100) / 100
+                    val longitude = round(Random.nextDouble(124.0, 132.0) * 100) / 100
+                    val menus = ArrayList<Item>().apply {
+                        for (i in 0..Random.nextInt(10)) add(  // 메뉴 1~n개 랜덤
+                            with(itemListList[Random.nextInt(itemListList.size)]) {
+                                this[Random.nextInt(this.size())]
+                            }
+                        )
+                    }
+                    menus.sortBy { it.name }
+                    deliveryList.add(DeliveryOrder(altitude, longitude, menus))
+                }
+                if (flag) println("\t\t\t(배달 접수되었습니다. 현재 배달 대기수: ${deliveryList.size})")
+                else println("\t\t\t(현재 배달 대기수: ${deliveryList.size})")
             }
         }
     }
@@ -40,23 +70,27 @@ class Kiosk {
 
     fun run() {
         while (!isTerminate) page_1()
-        job.cancel()
+        jobCurrentOrderCount.cancel()
+        jobRandomDelivery.cancel()
         println("프로그램을 종료합니다.")
     }
 
     fun page_1() {
         println("=================================")
-        println("SHAKESHACK 키오스크입니다.")
+        println("맘스터치 키오스크입니다.")
         println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.")
         println("[ 맘스터치 메뉴 ]")
         itemListList.forEachIndexed { index, itemList ->
             println("${index + 1}. ${itemList.name}\t| ${itemList.detail}")
         }
         if (basket.isNotEmpty()) {
-            println("[ 주문 메뉴 ]")
+            println("[ 장바구니 메뉴 ]")
             println("${itemListList.size + 1}. 주문\t\t| 장바구니를 확인 후 주문합니다.")
             println("${itemListList.size + 2}. 취소\t\t| 진행중인 주문을 취소합니다.")
         }
+        println("[ 직원용 메뉴 ]")
+        println("8. 잔액 조회\t| 카드 잔액을 확인합니다.")
+        println("9. 배달 요청 목록\t| 들어온 배달 주문의 목록을 확인합니다.")
         println("0. 종료\t\t| 프로그램 종료")
 
         while (true) {
@@ -90,6 +124,13 @@ class Kiosk {
                         wait(1)
                         break
                     }
+                }
+
+                8 -> println("카드 잔액: ${Cashcard.money}")
+
+                9 -> {
+                    page_deliveryCheck()
+                    break
                 }
 
                 else -> println("잘못된 입력입니다: $s")
@@ -150,7 +191,7 @@ class Kiosk {
         val total = basket.fold(0) { acc, item -> acc + item.price }
 
         println("아래와 같이 주문 하시겠습니까?")
-        println("[ 주문 목록 ]")
+        println("[ 장바구니 ]")
         basket.sortBy { it.name }
         basket.forEachIndexed { index, item ->
             println("${index + 1}. ${item.info()}")
@@ -188,6 +229,29 @@ class Kiosk {
 
                 else -> println("잘못된 입력입니다: $s")
             }
+        }
+    }
+
+    fun page_deliveryCheck() {
+        println("[ 배달 주문 목록 ]")
+        deliveryList.forEachIndexed { index, items ->
+            println("[$index] 총 금액: ${items.total()}, 위도: ${items.latitude}, 경도: ${items.longitude}")
+            items.lst.forEach { println(it.info()) }
+        }
+        // TODO: 번호 선택해서 배달 처리한 건 제거 기능
+        println("(엔터를 누루면 뒤로 갑니다)")
+
+        while (true) {
+            val s = readln()
+            break
+//            when (s.toIntOrNull() ?: -1) {
+//                1 -> {
+//                    println("배달 주문 선택 제거 기능")
+//                    break
+//                }
+//
+//                else -> println("잘못된 입력입니다: $s")
+//            }
         }
     }
 
