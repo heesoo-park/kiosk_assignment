@@ -1,6 +1,20 @@
+
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+
 fun main(){
     val order = Order()
+    //코루틴을 사용해서 비동기적으로 메서드 실행
+    GlobalScope.launch {
+        order.waitingOrder()
+    }
     while(true){
+        println("메뉴판을 불러오는중....")
+        println()
+        Thread.sleep(3000)
         println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.")
         println()
         println("[ MOM'S TOUCH ]")
@@ -13,6 +27,7 @@ fun main(){
             println("[ ORDER MENU ]")
             println("5. Order     | 장바구니를 확인 후 주문합니다.")
             println("6. Cancle    | 진행중인 주문을 취소합니다.")
+            println("7. Coupon    | 할인권 발급하기.")
         }
 
         val mainChoice = choiceNumber("mainChoice").toString().toInt()
@@ -235,12 +250,30 @@ fun main(){
                 val realOrder = choiceNumber("realOrder").toString().toInt()
                 when(realOrder){
                     1 -> {
-                        order.isMyMoneyOk()
+                        //특정시간을 비교해서 특정시간대에는 결제 불가능하게
+                        val currentTime = LocalDateTime.now()
+                        val formatter = DateTimeFormatter.ofPattern("HHmm")
+                        val formattedcurrentTime = currentTime.format(formatter).toInt()
+
+                        val formatter1 = DateTimeFormatter.ofPattern("HH시mm분")
+                        val formattedcurrentTime1 = currentTime.format(formatter1)
+                        if(formattedcurrentTime > 1445 && formattedcurrentTime < 1500){
+                            println("현재 시각은 $formattedcurrentTime1 입니다.")
+                            println("은행 점검 시간은 14시45분 ~ 15시 00분 이므로 결제할 수 없습니다.")
+                        }else{
+                            order.isMyMoneyOk()
+                        }
                     }
                     else -> {}
                 }
             }
-            6 -> {}
+            6 -> {
+                order.cancleOrder()
+            }
+            7 -> {
+                println("W15000 이상 구매시 사용가능한 1000원 할인쿠폰을 발급해드렸습니다.")
+                order.coupon = 1
+            }
             else -> {
                 println("프로그램을 종료합니다.")
                 break
@@ -255,7 +288,7 @@ fun choiceNumber(type:String): Int{
                 try {
                     val mainChoice:String? = readLine()
                     val result = mainChoice?.toInt() ?: -1
-                    if(result > 6 || result < 0){
+                    if(result > 7 || result < 0){
                         println("범위를 확인하고 다시 골라주세요")
                     }else{
                         return result
