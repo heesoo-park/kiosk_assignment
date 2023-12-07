@@ -9,7 +9,8 @@ open class Menu(val name:String, val price:Int, val description:String) {
     }
 
     fun deliveryOrder(){
-        println("배달 주문이 들어왔습니다. 상품명 : $name 가격 : $price")
+        println("배달 주문이 들어왔습니다.")
+        println("상품명: $name           가격: $price")
 
     }
 

@@ -10,10 +10,7 @@ data class randomDelivery(
 object DeliveryOrder {
     public val myDeliveryOrder: MutableList<randomDelivery> = mutableListOf()
     fun delivery() {
-        var deliveryBurger: Burger
-        var deliveryChicken: Chicken
-        var deliveryDrink: Drink
-        var deliverySide: Side
+        var food : Food
 
         //서울 위도경도
         val seoulLatitude = 37.5665
@@ -33,42 +30,42 @@ object DeliveryOrder {
 
         when (menuRandom) {
             0 -> {
-                deliveryBurger = MenuInfo.burgerInfo[choiceRandom]
-                deliveryBurger.deliveryOrder()
+                food = MenuInfo.burgerInfo[choiceRandom]
+                food.deliveryOrder()
                 println("주문 위치")
                 println("위도 : $randomLatitude, 경도 : $randomLongitude")
-                val myorder = randomDelivery(deliveryBurger.name, deliveryBurger.price, randomLatitude, randomLongitude)
+                val myorder = randomDelivery(food.name, food.price, randomLatitude, randomLongitude)
                 println()
                 myDeliveryOrder.add(myorder)
 
             }
 
             1 -> {
-                deliveryChicken = MenuInfo.chickenInfo[choiceRandom]
-                deliveryChicken.deliveryOrder()
+                food = MenuInfo.chickenInfo[choiceRandom]
+                food.deliveryOrder()
                 println("주문 위치")
                 println("위도 : $randomLatitude, 경도 : $randomLongitude")
-                val myorder = randomDelivery(deliveryChicken.name, deliveryChicken.price, randomLatitude, randomLongitude)
+                val myorder = randomDelivery(food.name, food.price, randomLatitude, randomLongitude)
                 println()
                 myDeliveryOrder.add(myorder)
             }
 
             2 -> {
-                deliveryDrink = MenuInfo.drinkInfo[choiceRandom]
-                deliveryDrink.deliveryOrder()
+                food = MenuInfo.drinkInfo[choiceRandom]
+                food.deliveryOrder()
                 println("주문 위치")
                 println("위도 : $randomLatitude, 경도 : $randomLongitude")
-                val myorder = randomDelivery(deliveryDrink.name, deliveryDrink.price, randomLatitude, randomLongitude)
+                val myorder = randomDelivery(food.name, food.price, randomLatitude, randomLongitude)
                 println()
                 myDeliveryOrder.add(myorder)
             }
 
             3 -> {
-                deliverySide = MenuInfo.sideInfo[sideRandom]
-                deliverySide.deliveryOrder()
+                food = MenuInfo.sideInfo[sideRandom]
+                food.deliveryOrder()
                 println("주문 위치")
                 println("위도 : $randomLatitude, 경도 : $randomLongitude")
-                val myorder = randomDelivery(deliverySide.name, deliverySide.price, randomLatitude, randomLongitude)
+                val myorder = randomDelivery(food.name, food.price, randomLatitude, randomLongitude)
                 println()
                 myDeliveryOrder.add(myorder)
             }
