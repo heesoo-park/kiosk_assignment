@@ -20,6 +20,11 @@ class MenuUI {
         println("6. 주문취소\t | 진행중인 주문을 취소합니다.")
     }
 
+    fun deliveryMenu() {
+        println("[배달 메뉴 카테고리]")
+        println("8. 배달요청목록\t | 배달 주문을 확인합니다.")
+    }
+
     fun bergerMenu() {
         println("[버거 메뉴 카테고리]")
         burgerInfo.forEachIndexed { index, burger ->

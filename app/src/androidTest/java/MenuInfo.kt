@@ -22,4 +22,6 @@ object MenuInfo {
         Side("양념감자", 2000, "맘스터치 특유의 양념감자"),
         Side("할라피뇨너겟", 2000, "매콤한 맛이 추가된 치킨너겟")
     )
+
+    val totalInfo = arrayListOf(burgerInfo, chickenInfo, drinkInfo, sideInfo)
 }

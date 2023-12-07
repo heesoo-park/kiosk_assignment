@@ -2,13 +2,17 @@ import MenuInfo.burgerInfo
 import MenuInfo.chickenInfo
 import MenuInfo.drinkInfo
 import MenuInfo.sideInfo
+import MenuInfo.totalInfo
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.round
+import kotlin.random.Random
 
 // 쓰지 않게된 함수들
 //fun isInteger(s: String): Boolean {
@@ -38,14 +42,37 @@ fun main() {
     val menuUI = MenuUI()
     var orderReceipt = OrderReceipt()
     val proceedingOrderList = mutableListOf<OrderReceipt>()
+    var deliveryReceipt = DeliveryReceipt()
+    val proceedingDeliveryList = mutableListOf<DeliveryReceipt>()
     var currentMoney = (30000..50000).random()
     var coupon = false
 
-    GlobalScope.launch {
+    GlobalScope.launch(Dispatchers.Default) {
         while (true) {
             delay(5000)
             if (proceedingOrderList.isNotEmpty()) println("(현재 주문 대기수 : ${proceedingOrderList.size})")
             else println("(현재 주문 대기수 : 0)")
+
+            if (proceedingDeliveryList.isNotEmpty()) println("(현재 배달 대기수 : ${proceedingDeliveryList.size})")
+            else println("(현재 배달 대기수 : 0)")
+        }
+    }
+
+    GlobalScope.launch(Dispatchers.IO) {
+        while (true) {
+            delay(10000)
+            val menus = (1..10).random()
+            for (i in 1..menus) {
+                val type1 = (1..totalInfo.size).random()
+                val type2 = (1..totalInfo[type1 - 1].size).random()
+                deliveryReceipt.addMenu(totalInfo[type1 - 1][type2 - 1])
+            }
+            val altitude = round(Random.nextDouble(33.0, 43.0) * 100) / 100
+            val longitude = round(Random.nextDouble(124.0, 132.0) * 100) / 100
+            deliveryReceipt.addPosition(altitude, longitude)
+            proceedingDeliveryList.add(deliveryReceipt)
+            deliveryReceipt = DeliveryReceipt()
+            println("배달 주문이 들어왔습니다.")
         }
     }
 
@@ -55,6 +82,9 @@ fun main() {
         menuUI.mainMenu()
         if (orderReceipt.orderReceipt.isNotEmpty() || proceedingOrderList.isNotEmpty()) {
             menuUI.orderMenu()
+        }
+        if (deliveryReceipt.deliveryReceipt.isNotEmpty() || proceedingDeliveryList.isNotEmpty()) {
+            menuUI.deliveryMenu()
         }
 
         val menu = readln()
@@ -334,6 +364,32 @@ fun main() {
                 }
 
                 waitTime()
+            }
+            8 -> {
+                if (proceedingDeliveryList.isEmpty()) {
+                    println("확인할 배달 주문이 없습니다.\n")
+
+                    waitTime()
+                }
+                proceedingDeliveryList.forEachIndexed { index, it ->
+                    it.printProceedingDelivery(index + 1)
+                }
+                println("0. 뒤로가기")
+
+                while (true) {
+                    val check = readln()
+                    when(check.toIntOrNull() ?: - 1) {
+                        0 -> {
+                            println("처음화면으로 돌아갑니다.\n")
+
+                            waitTime()
+                            break
+                        }
+                        else -> {
+                            println("잘못된 입력입니다 다시 입력해주세요.")
+                        }
+                    }
+                }
             }
             else -> {
                 println("잘못된 입력입니다 다시 입력해주세요.")

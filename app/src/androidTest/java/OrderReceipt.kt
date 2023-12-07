@@ -1,15 +1,6 @@
 class OrderReceipt {
-    var orderReceipt: MutableList<Order>
-    var sum: Int
-
-    constructor() {
-        orderReceipt = mutableListOf()
-        sum = 0
-    }
-    constructor(orderReceipt: MutableList<Order>, totalSum: Int) {
-        this.orderReceipt = orderReceipt
-        this.sum = totalSum
-    }
+    var orderReceipt: MutableList<Order> = mutableListOf()
+    var sum: Int = 0
 
     fun addMenu(detail: Item) {
         orderReceipt.add(Order(detail))
