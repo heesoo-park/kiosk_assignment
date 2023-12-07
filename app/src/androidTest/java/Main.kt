@@ -80,10 +80,10 @@ fun main() {
         println("안녕하세요 맘스터치입니다.")
         println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.\n")
         menuUI.mainMenu()
-        if (orderReceipt.orderReceipt.isNotEmpty() || proceedingOrderList.isNotEmpty()) {
+        if (orderReceipt.receipt.isNotEmpty() || proceedingOrderList.isNotEmpty()) {
             menuUI.orderMenu()
         }
-        if (deliveryReceipt.deliveryReceipt.isNotEmpty() || proceedingDeliveryList.isNotEmpty()) {
+        if (deliveryReceipt.receipt.isNotEmpty() || proceedingDeliveryList.isNotEmpty()) {
             menuUI.deliveryMenu()
         }
 
@@ -248,7 +248,7 @@ fun main() {
             }
             5 -> {
                 while (true) {
-                    if (orderReceipt.orderReceipt.isEmpty()) {
+                    if (orderReceipt.receipt.isEmpty()) {
                         println("주문 내역이 없습니다.")
 
                         waitTime()
@@ -372,7 +372,7 @@ fun main() {
                     waitTime()
                 }
                 proceedingDeliveryList.forEachIndexed { index, it ->
-                    it.printProceedingDelivery(index + 1)
+                    it.printProceedingOrders(index + 1)
                 }
                 println("0. 뒤로가기")
 
