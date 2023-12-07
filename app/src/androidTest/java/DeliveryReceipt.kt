@@ -16,7 +16,7 @@ class DeliveryReceipt: Receipt() {
         println("[ 주문 ${num} ]")
         println("[ 위도 : ${altitude}, 경도 : ${longitude} ]")
         receipt.forEachIndexed { index, it ->
-            println("${index + 1}. ${it.detail.name}\t | ${it.detail.price} | ${it.detail.desc}")
+            println("${index + 1}. ${it.name}\t | ${it.price} | ${it.desc}")
         }
         println("\n[ 총 금액 ]")
         println("${sum}원\n")

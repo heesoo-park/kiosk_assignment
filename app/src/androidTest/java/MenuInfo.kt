@@ -29,9 +29,10 @@ object MenuInfo {
         Food("할라피뇨너겟 ", 2000, "매콤한 맛이 추가된 치킨너겟")
     )
 
-    // 모든 메뉴 정보
-    // 배달 기능을 위해 생성
+    // 모든 메뉴 정보 리스트
     val totalInfo = arrayListOf(Pair2("버거 ", burgerInfo), Pair2("치킨 ", chickenInfo), Pair2("음료 ", drinkInfo), Pair2("사이드", sideInfo))
 }
 
+// 타입과 리스트를 동시에 저장하기 위한 data class
+// 수정이 가능하게 var 타입으로 지정
 data class Pair2(var type: String, var info: ArrayList<Food>)

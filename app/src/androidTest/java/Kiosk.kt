@@ -61,6 +61,7 @@ class Kiosk {
         println()
     }
 
+    // 메인 함수에서 실행하는 함수
     fun run() {
         menuUI.printTitle()
         // 프로그램의 시작 부분
@@ -68,6 +69,7 @@ class Kiosk {
         println("\n************프로그램을 종료합니다.**************")
     }
 
+    // 메인 페이지
     fun page_first() {
         println("\n***********안녕하세요 맘스터치입니다.************")
         println("***아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.***\n")
@@ -146,6 +148,7 @@ class Kiosk {
         waitTime()
     }
 
+    // 음식을 선택하는 페이지
     fun page_selectFood(menuList: Pair2) {
         menuUI.printFoodMenu(menuList)
         print("-> ")
@@ -156,7 +159,7 @@ class Kiosk {
             when (foodChoice) {
                 // 돌아가기
                 0 -> {
-                    println("처음화면으로 돌아갑니다.\n")
+                    println("{ 처음화면으로 돌아갑니다. }\n")
                     break
                 }
                 // 음식 선택 시
@@ -169,6 +172,7 @@ class Kiosk {
         }
     }
 
+    // 음식들을 장바구니에 추가하는 페이지
     fun page_addBasket(food: Food) {
         // 선택된 버거의 정보를 따로 출력
         println("\n=====================================================================================================")
@@ -192,13 +196,14 @@ class Kiosk {
                 }
                 // 취소를 누른 경우
                 2 -> {
-                    println("처음화면으로 돌아갑니다.\n")
+                    println("{ 처음화면으로 돌아갑니다. }\n")
                     break
                 }
             }
         }
     }
 
+    // 장바구니에 넣은 음식을 주문하는 페이지
     fun page_orderBasket() {
         println("***아래와 같이 주문 하시겠습니까?***")
         // 주문 영수증에 들어있는 메뉴들 전체 출력
@@ -215,8 +220,8 @@ class Kiosk {
                     // 은행 점검시간인지 확인
                     if (checkInspectionTime()) {
                         // 처음화면으로 돌아감
-                        println("은행 점검 시간은 오후11시 10분 ~ 오후 11시 20분이므로 결제할 수 없습니다.\n")
-                        println("처음화면으로 돌아갑니다.\n")
+                        println("###은행 점검 시간은 오후11시 10분 ~ 오후 11시 20분이므로 결제할 수 없습니다.\n")
+                        println("{ 처음화면으로 돌아갑니다. }\n")
                         break
                     } else {
                         // 쿠폰이 있고 쿠폰 적용 조건에 맞는지 확인
@@ -253,13 +258,13 @@ class Kiosk {
                 }
                 // 메뉴판 선택 시
                 2 -> {
-                    println("처음화면으로 돌아갑니다.\n")
+                    println("{ 처음화면으로 돌아갑니다. }\n")
                     break
                 }
             }
         }
     }
-
+    // 주문을 취소할 수 있는 페이지
     fun page_cancelOrder() {
         println("***취소할 주문을 선택해주세요.***")
         // 현재 진행중인 주문 리스트에 있는 영수증을 다 보여줌
@@ -305,11 +310,11 @@ class Kiosk {
                     continue
                 }
             }
-            println("처음화면으로 돌아갑니다.\n")
+            println("{ 처음화면으로 돌아갑니다. }\n")
             break
         }
     }
-
+    // 배달 리스트를 출력하는 페이지
     fun page_deliveryList() {
         // 진행중인 배달 리스트에 들어있는 모든 배달 영수증을 출력
         proceedingDeliveryList.forEachIndexed { index, it ->
@@ -324,13 +329,14 @@ class Kiosk {
             when(zeroOrNot) {
                 // 뒤로가기 선택 시
                 0 -> {
-                    println("처음화면으로 돌아갑니다.\n")
+                    println("{ 처음화면으로 돌아갑니다. }\n")
                     break
                 }
             }
         }
     }
 
+    // 현재 주문/배달 대기수 출력
     fun printOrderDelivery() {
         // 현재 주문 대기수
         if (proceedingOrderList.isNotEmpty()) println("\n(현재 주문 대기수 : ${proceedingOrderList.size})")
@@ -340,6 +346,7 @@ class Kiosk {
         else println("(현재 배달 대기수 : 0)\n")
     }
 
+    // 랜덤 배달 주문
     fun checkDelivery() {
         // 몇 개의 메뉴를 선택할 건지
         val menus = (1..10).random()
@@ -361,7 +368,7 @@ class Kiosk {
         // 배달 영수증을 배달리스트에 추가
         proceedingDeliveryList.add(deliveryReceipt)
         deliveryReceipt = DeliveryReceipt()
-        println("배달 주문이 들어왔습니다.")
+        println("\n<<<배달 주문이 들어왔습니다.>>>")
     }
 
     // 은행 점검시간 확인하는 함수
@@ -374,13 +381,15 @@ class Kiosk {
         val endInspectionTime = LocalTime.parse("11:20:00")
 
         // 현재 시간을 HH시 mm분 형태로 변환해 출력
-        println("현재 시각은 ${curTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))}입니다. ")
+        println("###현재 시각은 ${curTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))}입니다.###")
         // 현재시간이 은행 점검시간에 포함되는지를 비교해서 반환
         return curTime.isAfter(startInspectionTime) && curTime.isBefore(endInspectionTime)
     }
 
+    // 타입에 맞는 입력값인지 판별하는 함수
     fun choiceNumber(type: String): Int {
         when (type) {
+            // 메인 메뉴
             "mainChoice" -> {
                 while (true) {
                     try {
@@ -396,7 +405,7 @@ class Kiosk {
                     }
                 }
             }
-
+            // 음식 리스트
             "foodChoice" -> {
                 while (true) {
                     try {
@@ -412,7 +421,7 @@ class Kiosk {
                     }
                 }
             }
-
+            // 1 또는 2 선택
             "oneOrTwo" -> {
                 while (true) {
                     try {
@@ -428,7 +437,7 @@ class Kiosk {
                     }
                 }
             }
-
+            // 0 하나만 선택 가능
             "zeroOrNot" -> {
                 while (true) {
                     try {
