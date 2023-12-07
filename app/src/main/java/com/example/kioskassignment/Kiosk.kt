@@ -118,6 +118,30 @@ class Kiosk {
 //                "   /:/  /   \\::/  /    /:/  /   \\::/  /        \\/__/     \\::/  /   \\::/  /   \\:\\__\\     /:/  / \n" +
 //                "   \\/__/     \\/__/     \\/__/     \\/__/                    \\/__/     \\/__/     \\/__/     \\/__/  \n")
 
+//        println("_________________________________________________________________________________________________\n" +
+//                "    _   _       __      _   _          __        ______      __      _     _      __      _     _\n" +
+//                "    /  /|     /    )    /  /|  /     /    )        /       /    )    /    /     /    )    /    / \n" +
+//                "---/| /-|----/----/----/| /-|--------\\------------/-------/----/----/----/-----/---------/___ /--\n" +
+//                "  / |/  |   /    /    / |/  |         \\          /       /    /    /    /     /         /    /   \n" +
+//                "_/__/___|__(____/____/__/___|_____(____/________/_______(____/____(____/_____(____/____/____/____\n" +
+//                "                                                                                                 \n")
+
+//        // eftifont
+//        println(" _   _   _   _   _  _ __   ___   _   _ _   __  _ _ \n" +
+//                "| \\_/ | / \\ | \\_/ |/// _| |_ _| / \\ | | | / _|| U |\n" +
+//                "| \\_/ |( o )| \\_/ |  \\_ \\  | | ( o )| U |( (_ |   |\n" +
+//                "|_| |_| \\_/ |_| |_|  |__/  |_|  \\_/ |___| \\__||_n_|\n" +
+//                "                                                   \n")
+//        // nancyj-fancy
+//        println("M\"\"\"\"\"`'\"\"\"`YM MMP\"\"\"\"\"YMM M\"\"\"\"\"`'\"\"\"`YM d8 MP\"\"\"\"\"\"`MM    M\"\"\"\"\"\"\"\"M MMP\"\"\"\"\"YMM M\"\"MMMMM\"\"M MM'\"\"\"\"'YMM M\"\"MMMMM\"\"MM \n" +
+//                "M  mm.  mm.  M M' .mmm. `M M  mm.  mm.  M 88 M  mmmmm..M    Mmmm  mmmM M' .mmm. `M M  MMMMM  M M' .mmm. `M M  MMMMM  MM \n" +
+//                "M  MMM  MMM  M M  MMMMM  M M  MMM  MMM  M .P M.      `YM    MMMM  MMMM M  MMMMM  M M  MMMMM  M M  MMMMMooM M         `M \n" +
+//                "M  MMM  MMM  M M  MMMMM  M M  MMM  MMM  M    MMMMMMM.  M    MMMM  MMMM M  MMMMM  M M  MMMMM  M M  MMMMMMMM M  MMMMM  MM \n" +
+//                "M  MMM  MMM  M M. `MMM' .M M  MMM  MMM  M    M. .MMM'  M    MMMM  MMMM M. `MMM' .M M  `MMM'  M M. `MMM' .M M  MMMMM  MM \n" +
+//                "M  MMM  MMM  M MMb     dMM M  MMM  MMM  M    Mb.     .dM    MMMM  MMMM MMb     dMM Mb       dM MM.     .dM M  MMMMM  MM \n" +
+//                "MMMMMMMMMMMMMM MMMMMMMMMMM MMMMMMMMMMMMMM    MMMMMMMMMMM    MMMMMMMMMM MMMMMMMMMMM MMMMMMMMMMM MMMMMMMMMMM MMMMMMMMMMMM \n" +
+//                "                                                                                                                        \n")
+
         // https://snskeyboard.com/asciitext/    글씨체: starwars
         println(" .___  ___.   ______   .___  ___.  __     _______.    .___________.  ______    __    __    ______  __    __  \n" +
                 " |   \\/   |  /  __  \\  |   \\/   | (_ )   /       |    |           | /  __  \\  |  |  |  |  /      ||  |  |  | \n" +
@@ -125,24 +149,22 @@ class Kiosk {
                 " |  |\\/|  | |  |  |  | |  |\\/|  |        \\   \\            |  |     |  |  |  | |  |  |  | |  |     |   __   | \n" +
                 " |  |  |  | |  `--'  | |  |  |  |    .----)   |           |  |     |  `--'  | |  `--'  | |  `----.|  |  |  | \n" +
                 " |__|  |__|  \\______/  |__|  |__|    |_______/            |__|      \\______/   \\______/   \\______||__|  |__| \n")
-        println("맘스터치 키오스크입니다.")
-        println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.")
-        println("[ 맘스터치 메뉴 ]")
+        println(" [ 맘스터치 메뉴 ]")
         // 버거류 등의 카테고리를 선택지로 나열
         itemListList.forEachIndexed { index, itemList ->
-            println("${index + 1}. ${itemList.name}\t| ${itemList.detail}")
+            println("%d. %-10s\t| %s".format(index + 1, itemList.name, itemList.detail))
         }
         // 장바구니에 아이템이 있을때만 메뉴를 출력. 쿠폰 적용은 장바구니 메뉴에 포함되어있다.
         if (basket.isNotEmpty()) {
-            println("[ 장바구니 메뉴 ]")
-            println("${itemListList.size + 1}. 주문\t\t| 장바구니를 확인 후 주문합니다.")
-            println("${itemListList.size + 2}. 쿠폰 적용\t\t| 쿠폰 바코드 또는 큐알코드를 스캔합니다.")
-            println("${itemListList.size + 3}. 취소\t\t| 진행중인 주문을 취소합니다.")
+            println(" [ 장바구니 메뉴 ]")
+            println("%-13s\t| %s".format("5. 주문", "장바구니를 확인 후 주문합니다."))
+            println("%-13s\t| %s".format("6. 쿠폰 적용", "쿠폰 바코드 또는 큐알코드를 스캔합니다."))
+            println("%-13s\t| %s".format("7. 취소", "진행중인 주문을 취소합니다."))
         }
-        println("[ 직원용 메뉴 ]")
-        println("8. 잔액 조회\t| 카드 잔액을 확인합니다.")  // 현재 소지금
-        println("9. 배달 요청 목록\t| 들어온 배달 주문의 목록을 확인합니다.")
-        println("0. 종료\t\t| 프로그램 종료")
+        println(" [ 직원용 메뉴 ]")
+        println("%-13s\t| %s".format("8. 잔액 조회", "카드 잔액을 확인합니다."))
+        println("%-13s\t| %s".format("9. 배달 요청 목록", "들어온 배달 주문의 목록을 확인합니다."))
+        println("%-13s\t| %s".format("0. 종료", "프로그램 종료"))
 
         while (true) {  // 올바른 입력 루프
             val s = readln()
