@@ -13,6 +13,8 @@ class Kiosk {
     var itemListList = ArrayList<ItemList>()
     var isTerminate = false
     var basket = ArrayList<Item>()
+    var basket_discount = 1.0  // TODO: 장바구니 클래스를 만들어야 하지만 일단 생략
+    var basket_forDiscount = 0x70000000
     var orderList = ArrayList<ArrayList<Item>>()
     var deliveryList = ArrayList<DeliveryOrder>()
     var jobCurrentOrderCount: Job
@@ -25,10 +27,11 @@ class Kiosk {
 
     init {
         initItemListList()
+        basket_init()
         jobCurrentOrderCount = CoroutineScope(Dispatchers.Default).launch {
             while (true) {
                 runBlocking {
-                    delay(5000L)
+                    delay(10000L)  // 5초는 너무 자주 뜬다... 10초로.
                 }
                 println("\t\t\t(현재 주문 대기수: ${orderList.size})")
             }
@@ -46,7 +49,7 @@ class Kiosk {
                     val altitude = round(Random.nextDouble(33.0, 43.0) * 100) / 100
                     val longitude = round(Random.nextDouble(124.0, 132.0) * 100) / 100
                     val menus = ArrayList<Item>().apply {
-                        for (i in 0..Random.nextInt(10)) add(  // 메뉴 1~n개 랜덤
+                        for (i in 0..Random.nextInt(6)) add(  // 메뉴 1~n개 랜덤
                             with(itemListList[Random.nextInt(itemListList.size)]) {
                                 this[Random.nextInt(this.size())]
                             }
@@ -69,13 +72,13 @@ class Kiosk {
     }
 
     fun run() {
-        while (!isTerminate) page_1()
+        while (!isTerminate) page_first()
         jobCurrentOrderCount.cancel()
         jobRandomDelivery.cancel()
         println("프로그램을 종료합니다.")
     }
 
-    fun page_1() {
+    fun page_first() {
         println("=================================")
         println("맘스터치 키오스크입니다.")
         println("아래 메뉴판을 보시고 메뉴를 골라 입력해주세요.")
@@ -86,7 +89,8 @@ class Kiosk {
         if (basket.isNotEmpty()) {
             println("[ 장바구니 메뉴 ]")
             println("${itemListList.size + 1}. 주문\t\t| 장바구니를 확인 후 주문합니다.")
-            println("${itemListList.size + 2}. 취소\t\t| 진행중인 주문을 취소합니다.")
+            println("${itemListList.size + 2}. 쿠폰 적용\t\t| 쿠폰 바코드 또는 큐알코드를 스캔합니다.")
+            println("${itemListList.size + 3}. 취소\t\t| 진행중인 주문을 취소합니다.")
         }
         println("[ 직원용 메뉴 ]")
         println("8. 잔액 조회\t| 카드 잔액을 확인합니다.")
@@ -102,7 +106,7 @@ class Kiosk {
                 }
 
                 in 1..itemListList.size -> {
-                    page_2(itemListList[n - 1])
+                    page_itemSelect(itemListList[n - 1])
                     break
                 }
 
@@ -110,7 +114,7 @@ class Kiosk {
                     if (basket.isEmpty()) {
                         println("잘못된 입력입니다: $s")
                     } else {
-                        page_order()
+                        page_basket()
                         break
                     }
                 }
@@ -119,7 +123,22 @@ class Kiosk {
                     if (basket.isEmpty()) {
                         println("잘못된 입력입니다: $s")
                     } else {
-                        basket.clear()
+                        println("쿠폰 바코드 또는 큐알코드를 스캔해주세요.")
+                        println("(스캔 중)")
+                        wait(1)
+                        basket_discount = 0.1
+                        basket_forDiscount = 30000
+                        println("3만원 이상 결제 시 90% 할인 쿠폰이 적용되었습니다.")
+                        wait(3)
+                        break
+                    }
+                }
+
+                itemListList.size + 3 -> {
+                    if (basket.isEmpty()) {
+                        println("잘못된 입력입니다: $s")
+                    } else {
+                        basket_init()
                         println("주문을 취소합니다.")
                         wait(1)
                         break
@@ -138,7 +157,7 @@ class Kiosk {
         }
     }
 
-    fun page_2(itemList: ItemList) {
+    fun page_itemSelect(itemList: ItemList) {
         println("[ ${itemList.name} 메뉴 ]")
         itemList.lst.forEachIndexed { index, item ->
             println("${index + 1}. ${item.info()}")
@@ -187,8 +206,9 @@ class Kiosk {
         }
     }
 
-    fun page_order() {
+    fun page_basket() {
         val total = basket.fold(0) { acc, item -> acc + item.price }
+        val total_discounted = (total * basket_discount).toInt()
 
         println("아래와 같이 주문 하시겠습니까?")
         println("[ 장바구니 ]")
@@ -197,6 +217,9 @@ class Kiosk {
             println("${index + 1}. ${item.info()}")
         }
         println("합계: $total 원")
+        if (basket_forDiscount <= total) {
+            println("주문 금액이 ${basket_forDiscount}원 이상이므로 할인 쿠폰 적용되어 ${total_discounted}원이 결제됩니다.")
+        }
         println()
         println("1. 주문    2 또는 0. 뒤로가기")
 
@@ -212,30 +235,19 @@ class Kiosk {
 
                     if (Cashcard.money < total) {
                         println("현재 잔액은 ${Cashcard.money}원으로 ${total - Cashcard.money}원이 부족해서 주문할 수 없습니다.")
-                        // TODO: 주문 취소
+                        // TODO: 개별 주문 취소
                         println("처음부터 다시 시도해주십시오.")
-                        basket.clear()
+                        basket_init()
                         wait(3)
                         break
                     }
 
-                    var discount = 1.0
-                    if (total >= 30000) {
-                        println("3만원 이상 결제 시 사용 가능한 90% 할인 쿠폰이 있습니다.")
-                        println("사용하시려면 1을 입력하세요.")
-                        if (readln().toIntOrNull() == 1) {
-                            discount = 0.1
-                            println("쿠폰이 적용되어 ${(total * discount).toInt()}원이 결제됩니다.")
-                        }
-                    }
-
-                    Cashcard.money -= (total * discount).toInt()
+                    Cashcard.money -= (total * basket_discount).toInt()
                     println("주문되었습니다. 현재 잔액은 ${Cashcard.money}원입니다.")
                     println("(주문 시각: ${Mytime.nowDateTimeFormatted()})")
                     // TODO: 주문 넘겨주는거 괜찮은가?
                     orderList.add(basket)
-                    basket = ArrayList<Item>()
-
+                    basket_init()
 
                     wait(3)
                     break
@@ -272,14 +284,20 @@ class Kiosk {
     }
 
     fun wait(sec: Int) {
-        print("... ")
-        (sec downTo 1).forEach {
+        runBlocking { delay(999L) }
+        if (sec <= 1) return
+        print(" ... ")
+        (sec - 1 downTo 1).forEach {
             print("$it ")
-//            Thread.sleep(999)
-            runBlocking {
-                delay(999)
-            }
+//            Thread.sleep(999L)
+            runBlocking { delay(999L) }
         }
         println()
+    }
+
+    fun basket_init() {
+        basket = ArrayList<Item>()  // 가비지 컬렉터 알아서 돌아갈 거라고 믿는다
+        basket_discount = 1.0
+        basket_forDiscount = 0x70000000
     }
 }
