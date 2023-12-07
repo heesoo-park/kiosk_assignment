@@ -113,10 +113,39 @@ class Kiosk {
                 6 -> {
                     // 진행중인 주문 리스트가 비어있는 경우
                     if (proceedingOrderList.isEmpty()) {
-                        System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        if (orderReceipt.receipt.isNotEmpty()) {
+                            println("현재 진행중인 주문 리스트는 없습니다.")
+                            page_clearBasket()
+                        } else {
+                            System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        }
                         break
                     } else {
-                        page_cancelOrder()
+                        if (orderReceipt.receipt.isEmpty()) {
+                            println("장바구니가 비어있습니다.")
+                            page_cancelOrder()
+                        } else {
+                            println("장바구니를 비우길 원하십니까 아니면 주문을 취소하기를 원하십니까?")
+                            println("  1. 장바구니 비우기\t 2. 주문 취소하기")
+
+                            while (true) {
+                                // 추가할 지 선택
+                                val oneOrTwo = choiceNumber("oneOrTwo").toString().toInt()
+                                when (oneOrTwo) {
+                                    // 장바구니 비우기를 누른 경우
+                                    1 -> {
+                                        page_clearBasket()
+                                        break
+                                    }
+                                    // 주문 취소하기를 누른 경우
+                                    2 -> {
+                                        page_cancelOrder()
+                                        break
+                                    }
+                                }
+                            }
+                        }
+
                         break
                     }
                 }
@@ -264,6 +293,31 @@ class Kiosk {
             }
         }
     }
+
+    // 장바구니를 비울 수 있는 페이지
+    fun page_clearBasket() {
+        println("장바구니를 비우기를 원하십니까?")
+        println("  1. 예\t 2. 아니요")
+
+        while (true) {
+            // 비울지 선택
+            val oneOrTwo = choiceNumber("oneOrTwo").toString().toInt()
+            when (oneOrTwo) {
+                // 비우는 걸 선택한 경우
+                1 -> {
+                    orderReceipt.clearMenu()
+                    println("장바구니를 비웠습니다.")
+                    break
+                }
+                // 비우지 않는 걸 선택한 경우
+                2 -> {
+                    println("{ 처음화면으로 돌아갑니다. }\n")
+                    break
+                }
+            }
+        }
+    }
+
     // 주문을 취소할 수 있는 페이지
     fun page_cancelOrder() {
         println("***취소할 주문을 선택해주세요.***")

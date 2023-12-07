@@ -13,6 +13,11 @@ open class Receipt {
         sum += food.price
     }
 
+    fun clearMenu() {
+        receipt.clear()
+        sum = 0
+    }
+
     // 현재까지 장바구니(영수증)에 들어가있는 모든 메뉴들을 보여줌
     // 마지막에는 총 금액까지 출력
     // 이 함수는 OrderReceipt 클래스에서만 그대로 쓰고 DeliveryReceipt 클래스에서는 쓰지 않기 때문에 open 키워드를 붙이지 않음
