@@ -1,18 +1,21 @@
-
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-fun main(){
+fun main() {
     val order = Order()
     val menuUI = MenuUI()
     //코루틴을 사용해서 비동기적으로 메서드 실행
     GlobalScope.launch {
+        //GlobalScope를 이용하지 않으면 suspend형식의 함수를 사용할수없다.
         order.waitingOrder()
     }
-    while(true){
+    GlobalScope.launch {
+        order.deliveryOrder()
+    }
+    while (true) {
         println("메뉴판을 불러오는중....")
         println()
         Thread.sleep(3000)
@@ -20,102 +23,135 @@ fun main(){
         println()
         //메인 메뉴판 불러오기
         menuUI.mainMenu()
-        if(order.myOrders.isNotEmpty()){
+        if (order.myOrders.isNotEmpty()) {
             menuUI.subMenu()
+        }
+        if (DeliveryOrder.myDeliveryOrder.isNotEmpty()) {
+            menuUI.deliveryMenu()
         }
 
         val mainChoice = choiceNumber("mainChoice").toString().toInt()
-        when(mainChoice){
+        when (mainChoice) {
             1 -> {
                 menuUI.burgerMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
-                when(otherChoice){
-                    in 1..MenuInfo.burgerInfo.size-> {
-                        MenuInfo.burgerInfo[otherChoice-1].displayInfo()
-                        intoOrder()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
+                when (otherChoice) {
+                    in 1..MenuInfo.burgerInfo.size -> {
+                        MenuInfo.burgerInfo[otherChoice - 1].displayInfoSetMenu()
+                        intoOrderSet()
+                        val orderOrCancle = choiceNumber("orderOrCancleSet").toString().toInt()
+                        when (orderOrCancle) {
                             1 -> {
-                                order.addOrder(MenuInfo.burgerInfo[otherChoice -1])
-                                println("주문목록에 ${MenuInfo.burgerInfo[otherChoice-1].name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.burgerInfo[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.burgerInfo[otherChoice - 1].name}를 추가했습니다.")
                             }
-                            else -> {
+
+                            2 -> {
                                 println("취소")
+                            }
+
+                            else -> {
+                                order.addOrder(MenuInfo.burgerSet[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.burgerSet[otherChoice - 1].name}를 추가했습니다.")
                             }
                         }
                     }
-                    else -> {println("뒤로가기")}
+
+                    else -> {
+                        println("뒤로가기")
+                    }
                 }
             }
+
             2 -> {
                 menuUI.chickenMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
-                when(otherChoice){
-                    in 1..MenuInfo.chickenInfo.size-> {
-                        MenuInfo.chickenInfo[otherChoice-1].displayInfo()
-                        intoOrder()
-                        val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
+                when (otherChoice) {
+                    in 1..MenuInfo.chickenInfo.size -> {
+                        MenuInfo.chickenInfo[otherChoice - 1].displayInfoSetMenu()
+                        intoOrderSet()
+                        val orderOrCancle = choiceNumber("orderOrCancleSet").toString().toInt()
+                        when (orderOrCancle) {
                             1 -> {
-                                order.addOrder(MenuInfo.chickenInfo[otherChoice-1])
-                                println("주문목록에 ${MenuInfo.chickenInfo[otherChoice-1].name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.chickenInfo[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.chickenInfo[otherChoice - 1].name}를 추가했습니다.")
                             }
-                            else -> {
+
+                            2 -> {
                                 println("취소")
+                            }
+
+                            else -> {
+                                order.addOrder(MenuInfo.chickenSet[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.chickenSet[otherChoice - 1].name}를 추가했습니다.")
                             }
                         }
                     }
-                    else -> {println("뒤로가기")}
+
+                    else -> {
+                        println("뒤로가기")
+                    }
                 }
             }
+
             3 -> {
                 menuUI.drinkMenu()
                 val otherChoice = choiceNumber("otherChoice").toString().toInt()
-                when(otherChoice){
-                    in 1.. MenuInfo.drinkInfo.size-> {
-                        MenuInfo.drinkInfo[otherChoice-1].displayInfo()
+                when (otherChoice) {
+                    in 1..MenuInfo.drinkInfo.size -> {
+                        MenuInfo.drinkInfo[otherChoice - 1].displayInfo()
                         intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
+                        when (orderOrCancle) {
                             1 -> {
-                                order.addOrder(MenuInfo.drinkInfo[otherChoice-1])
-                                println("주문목록에 ${MenuInfo.drinkInfo[otherChoice-1].name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.drinkInfo[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.drinkInfo[otherChoice - 1].name}를 추가했습니다.")
                             }
+
                             else -> {
                                 println("취소")
                             }
                         }
                     }
-                    else -> {println("뒤로가기")}
+
+                    else -> {
+                        println("뒤로가기")
+                    }
                 }
             }
+
             4 -> {
                 menuUI.sideMenu()
-                val otherChoice = choiceNumber("otherChoice").toString().toInt()
-                when(otherChoice){
-                    in 1 .. MenuInfo.sideInfo.size-> {
-                        MenuInfo.sideInfo[otherChoice-1].displayInfo()
+                val otherChoice = choiceNumber("sideChoice").toString().toInt()
+                when (otherChoice) {
+                    in 1..MenuInfo.sideInfo.size -> {
+                        MenuInfo.sideInfo[otherChoice - 1].displayInfo()
                         intoOrder()
                         val orderOrCancle = choiceNumber("orderOrCancle").toString().toInt()
-                        when(orderOrCancle){
+                        when (orderOrCancle) {
                             1 -> {
-                                order.addOrder(MenuInfo.sideInfo[otherChoice-1])
-                                println("주문목록에 ${MenuInfo.sideInfo[otherChoice-1].name}를 추가했습니다.")
+                                order.addOrder(MenuInfo.sideInfo[otherChoice - 1])
+                                println("주문목록에 ${MenuInfo.sideInfo[otherChoice - 1].name}를 추가했습니다.")
                             }
+
                             else -> {
                                 println("취소")
                             }
                         }
                     }
-                    else -> {println("뒤로가기")}
+
+                    else -> {
+                        println("뒤로가기")
+                    }
                 }
             }
+
             5 -> {
                 println(" 아래와 같이 주문 하시겟습니까?")
                 println()
                 order.showOrder()
                 val realOrder = choiceNumber("realOrder").toString().toInt()
-                when(realOrder){
+                when (realOrder) {
                     1 -> {
                         //특정시간을 비교해서 특정시간대에는 결제 불가능하게
                         val currentTime = LocalDateTime.now()
@@ -124,23 +160,36 @@ fun main(){
 
                         val formatter1 = DateTimeFormatter.ofPattern("HH시mm분")
                         val formattedcurrentTime1 = currentTime.format(formatter1)
-                        if(formattedcurrentTime > 1730 && formattedcurrentTime < 1750){
+                        if (formattedcurrentTime > 1730 && formattedcurrentTime < 1750) {
                             println("현재 시각은 $formattedcurrentTime1 입니다.")
                             println("은행 점검 시간은 17시30분 ~ 17시 50분 이므로 결제할 수 없습니다.")
-                        }else{
+                        } else {
                             order.isMyMoneyOk()
                         }
                     }
+
                     else -> {}
                 }
             }
+
             6 -> {
                 order.cancleOrder()
             }
+
             7 -> {
-                println("W15000 이상 구매시 사용가능한 1000원 할인쿠폰을 발급해드렸습니다.")
-                order.coupon = 1
+                if(order.coupon == 1){
+                    println(" 이미 쿠폰을 발급받으셨습니다. 한번의 쿠폰만 발급 가능합니다.")
+                }else{
+                    order.coupon = 1
+                    println("W15000 이상 구매시 사용가능한 1000원 할인쿠폰을 발급해드렸습니다.")
+                }
             }
+
+            8 -> {
+                println("배달목록 내역입니다.")
+                DeliveryOrder.deliveryListCheck()
+            }
+
             else -> {
                 println("프로그램을 종료합니다.")
                 break
@@ -148,72 +197,116 @@ fun main(){
         }
     }
 }
-fun choiceNumber(type:String): Int{
-    when(type){
+
+fun choiceNumber(type: String): Int {
+    when (type) {
         "mainChoice" -> {
-            while (true){
+            while (true) {
                 try {
-                    val mainChoice:String? = readLine()
+                    val mainChoice: String? = readLine()
                     val result = mainChoice?.toInt() ?: -1
-                    if(result > 7 || result < 0){
+                    if (result > 8 || result < 0) {
                         println("범위를 확인하고 다시 골라주세요")
-                    }else{
+                    } else {
                         return result
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     println("숫자로 입력해주세요")
                 }
             }
         }
+
         "otherChoice" -> {
-            while (true){
+            while (true) {
                 try {
-                    val otherChoice:String? = readLine()
+                    val otherChoice: String? = readLine()
                     val result = otherChoice?.toInt() ?: -1
-                    if(result > 3 || result < 0){
+                    if (result > 3 || result < 0) {
                         println("범위를 확인하고 다시 골라주세요")
-                    }else{
+                    } else {
                         return result
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     println("숫자로 입력해주세요")
                 }
             }
         }
+
+        "sideChoice" -> {
+            while (true) {
+                try {
+                    val otherChoice: String? = readLine()
+                    val result = otherChoice?.toInt() ?: -1
+                    if (result > 5 || result < 0) {
+                        println("범위를 확인하고 다시 골라주세요")
+                    } else {
+                        return result
+                    }
+                } catch (e: Exception) {
+                    println("숫자로 입력해주세요")
+                }
+            }
+        }
+
         "orderOrCancle" -> {
-            while (true){
+            while (true) {
                 try {
-                    val orderOrCancle:String? = readLine()
+                    val orderOrCancle: String? = readLine()
                     val result = orderOrCancle?.toInt() ?: -1
-                    if(result > 2 || result < 0){
+                    if (result > 2 || result < 0) {
                         println("범위를 확인하고 다시 골라주세요")
-                    }else{
+                    } else {
                         return result
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     println("숫자로 입력해주세요")
                 }
             }
         }
-        "realOrder" -> {
-            while (true){
+
+        "orderOrCancleSet" -> {
+            while (true) {
                 try {
-                    val realOrder:String? = readLine()
-                    val result = realOrder?.toInt() ?: -1
-                    if(result > 2 || result < 0){
+                    val orderOrCancle: String? = readLine()
+                    val result = orderOrCancle?.toInt() ?: -1
+                    if (result > 3 || result < 0) {
                         println("범위를 확인하고 다시 골라주세요")
-                    }else{
+                    } else {
                         return result
                     }
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     println("숫자로 입력해주세요")
                 }
             }
         }
-        else -> {return 0}
+
+        "realOrder" -> {
+            while (true) {
+                try {
+                    val realOrder: String? = readLine()
+                    val result = realOrder?.toInt() ?: -1
+                    if (result > 2 || result < 0) {
+                        println("범위를 확인하고 다시 골라주세요")
+                    } else {
+                        return result
+                    }
+                } catch (e: Exception) {
+                    println("숫자로 입력해주세요")
+                }
+            }
+        }
+
+        else -> {
+            return 0
+        }
     }
 }
-fun intoOrder(){
+
+fun intoOrderSet() {
     println("위 메뉴를 장바구니에 추가하시겠습니까?")
-    println("1. 확인       2. 취소")
+    println("1. 단품구매       2. 취소      3. 세트구매")
+}
+fun intoOrder() {
+    println("위 메뉴를 장바구니에 추가하시겠습니까?")
+    println("1. 단품구매       2. 취소")
 }

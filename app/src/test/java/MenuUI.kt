@@ -9,9 +9,12 @@ class MenuUI {
     }
     fun subMenu(){
         println("[ ORDER MENU ]")
-        println("5. Order     | 장바구니를 확인 후 주문합니다.")
-        println("6. Cancle    | 진행중인 주문을 취소합니다.")
-        println("7. Coupon    | 할인권 발급하기.")
+        println("5. Order      | 장바구니를 확인 후 주문합니다.")
+        println("6. Cancle     | 진행중인 주문을 취소합니다.")
+        println("7. Coupon     | 할인권 발급하기.")
+    }
+    fun deliveryMenu(){
+        println("8.배달목록 확인  | 배달내역 확인")
     }
     fun burgerMenu(){
         println("[ Bergers Menu ]")
@@ -38,9 +41,11 @@ class MenuUI {
     }
     fun sideMenu(){
         println("[ Side Menu ]")
-        println("1. 치즈스틱     | W2,000 |    치즈가 듬뿍 들어간 치즈스틱")
-        println("2. 양념감자     | W2,000 |    감자에 섞어먹는 양념")
-        println("3. 할라피뇨너겟  | W2,000 |    맛있는 너겟")
+        println("1. 치즈스틱           | W2,000 |    치즈가 듬뿍 들어간 치즈스틱")
+        println("2. 양념감자(중)        | W2,000 |    감자에 섞어먹는 양념")
+        println("3. 할라피뇨너겟(4조각)  | W2,000 |    맛있는 너겟")
+        println("4. 양념감자(대)        | W3,500 |    감자에 섞어먹는 양념")
+        println("5. 할라피뇨너겟(10조각) | W4,500 |    맛있는 너겟")
         println("0. 뒤로가기")
     }
 }

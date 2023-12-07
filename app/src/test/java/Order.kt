@@ -97,6 +97,16 @@ class Order(){
         }
     }
 
-    //15000원이상 구매시 할인가능한 쿠폰 발급.
+    //10초마다 랜덤하게 배달주분(메뉴명, 금액, 위도, 경도)추가
+    suspend fun deliveryOrder(){
+        runBlocking {
+            launch {
+                while (true){
+                    delay(10000)
+                    DeliveryOrder.delivery()
+                }
+            }
+        }
+    }
 
 }
