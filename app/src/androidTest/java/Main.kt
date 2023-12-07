@@ -14,7 +14,9 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.round
 import kotlin.random.Random
 
-// 코루틴이 3초 delay를 main 함수가 강제로 기다리게 만드는 함수
+/**
+ * 코루틴이 3초 delay를 main 함수가 강제로 기다리게 만드는 함수
+ */
 @OptIn(DelicateCoroutinesApi::class)
 fun waitTime() {
     runBlocking {
