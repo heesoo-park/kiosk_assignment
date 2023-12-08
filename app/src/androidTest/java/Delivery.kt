@@ -1,4 +1,4 @@
-// DeliveryReceipt 클래스는 Receipt 클래스를 상속받으면서 추가로 위도와 경도 정보를 받음
+// Delivery 클래스는 Receipt 클래스를 상속받으면서 추가로 위도와 경도 정보를 받음
 class Delivery: Receipt() {
     // 위도
     var altitude: Double = 0.0
