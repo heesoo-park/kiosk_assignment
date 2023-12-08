@@ -14,22 +14,28 @@ import kotlin.random.Random
 class Kiosk {
     // 메뉴 UI 객체
     val menuUI = MenuUI()
+
     // 주문 영수증 객체
     var order = Order()
+
     // 진행중인(준비중인) 주문 리스트 객체
     val proceedingOrderList = mutableListOf<Order>()
+
     // 배달 영수증 객체
     var delivery = Delivery()
+
     // 진행중인(준비중인) 배달 리스트 객체
     val proceedingDeliveryList = mutableListOf<Delivery>()
 
     // 사용자의 현재 잔액
     var currentMoney = (30000..50000).random() / 100 * 100
+
     // 사용자의 쿠폰 발급 여부
     var coupon = false
 
     // 프로그램 종료 판별 변수
     var isTerminate = false
+    var couponUsed = false
 
     init {
         /**
@@ -59,7 +65,7 @@ class Kiosk {
     fun waitTime() {
         runBlocking {
             print(" ... ")
-            for (i in 1..3 ) {
+            for (i in 1..3) {
                 print("$i ")
                 delay(999L)
             }
@@ -164,11 +170,12 @@ class Kiosk {
                 // 쿠폰 발급
                 7 -> {
                     // 쿠폰이 있을 때
-                    if (coupon) {
-                        println("***********이미 쿠폰을 발급받았습니다.***********")
-                    } else { // 쿠폰이 없을 때
-                        println("*************쿠폰이 발급되었습니다.*************")
+                    if (!coupon && !couponUsed) {
+                        println("쿠폰이 발급되었습니다.")
                         coupon = true
+                        couponUsed = true
+                    } else {
+                        println("쿠폰은 한번만 받을수있습니다.")
                     }
                     break
                 }
@@ -210,6 +217,7 @@ class Kiosk {
                     page_addBasket(menuList.info[foodChoice - 1])
                     break
                 }
+
                 else -> System.err.println("잘못된 입력입니다 다시 입력해주세요.")
             }
         }
@@ -266,28 +274,38 @@ class Kiosk {
                 1 -> {
                     // 은행 점검시간인지 확인
                     if (checkInspectionTime()) {
-                        // 은행 점검시간이라면 처음화면으로 돌아감
+                        // 처음화면으로 돌아감
                         println("###은행 점검 시간은 오후11시 10분 ~ 오후 11시 20분이므로 결제할 수 없습니다.\n")
-                        println("**********처음화면으로 돌아갑니다.**************\n")
+                        println("{ 처음화면으로 돌아갑니다. }\n")
                         break
-                    } else {
-                        // 쿠폰이 있고 쿠폰 적용 조건에 맞는지 확인
-                        if (coupon && order.sum >= 20000) {
-                            println("\n************쿠폰을 사용하시겠습니까?*************")
-                            println("********사용하기를 원한다면 1을 눌러주세요.********")
-                            // 쿠폰 사용 여부 선택
-                            val oneOrTwo2 = choiceNumber("oneOrTwo").toString().toInt()
-                            when (oneOrTwo2) {
-                                // 사용 선택 시
-                                1 -> {
-                                    // 20퍼센트 할인
-                                    order.sum = (order.sum * 0.8).toInt()
-                                    // 쿠폰 제거
-                                    coupon = false
-                                }
+                    } else if (coupon && order.sum >= 20000) {
+                        println("\n쿠폰을 사용하시겠습니까?")
+                        println("사용하기를 원한다면1, 뒤로가려면 2를 눌러주세요")
+                        // 쿠폰 사용 여부 선택
+                        val oneOrTwo2 = choiceNumber("oneOrTwo").toString().toInt()
+                        when (oneOrTwo2) {
+                            // 사용 선택 시
+                            1 -> {
+                                println("쿠폰 바코드 또는 큐알코드를 스캔해주세요.")
+                                println("(스캔 중)")
+                                // 20퍼센트 할인
+                                order.sum = (order.sum * 0.8).toInt()
+                                currentMoney -= order.sum
+                                println("20% 할인 쿠폰이 적용되었습니다.")
+                                println("남은 잔액은 ${currentMoney}원입니다.")
+                                // 진행중인 주문 리스트에 추가
+                                proceedingOrderList.add(order)
+                                order = Order()
+                                // 쿠폰 제거
+                                coupon = false
+                                break
+                            }
+
+                            else -> {
+                                break
                             }
                         }
-
+                    } else {
                         // 현재 잔액이 주문금액이 크다면
                         if (currentMoney >= order.sum) {
                             currentMoney -= order.sum
@@ -309,6 +327,7 @@ class Kiosk {
                     break
                 }
             }
+
         }
     }
 
@@ -382,6 +401,7 @@ class Kiosk {
                         }
                     }
                 }
+
                 else -> {
                     System.err.println("잘못된 입력입니다 다시 입력해주세요.")
                     continue
@@ -406,7 +426,7 @@ class Kiosk {
         while (true) {
             // 뒤로가기 선택 여부
             val zeroOrNot = choiceNumber("zeroOrNot").toString().toInt()
-            when(zeroOrNot) {
+            when (zeroOrNot) {
                 // 뒤로가기 선택 시
                 0 -> {
                     println("**********처음화면으로 돌아갑니다.**************\n")
@@ -460,9 +480,9 @@ class Kiosk {
         // 현재 시간
         val curTime = LocalTime.now()
         // 은행 점검 시작 시간
-        val startInspectionTime = LocalTime.parse("11:10:00")
+        val startInspectionTime = LocalTime.parse("15:10:00")
         // 은행 점검 끝나는 시간
-        val endInspectionTime = LocalTime.parse("11:20:00")
+        val endInspectionTime = LocalTime.parse("15:20:00")
 
         // 현재 시간을 HH시 mm분 형태로 변환해 출력
         println("###현재 시각은 ${curTime.format(DateTimeFormatter.ofPattern("HH시 mm분"))}입니다.###")
@@ -547,5 +567,4 @@ class Kiosk {
             }
         }
     }
-
 }
