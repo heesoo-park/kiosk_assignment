@@ -279,19 +279,19 @@ class Kiosk {
                         println("{ 처음화면으로 돌아갑니다. }\n")
                         break
                     } else if (coupon && order.sum >= 20000) {
-                        println("\n쿠폰을 사용하시겠습니까?")
-                        println("사용하기를 원한다면1, 뒤로가려면 2를 눌러주세요")
+                        println("\n************쿠폰을 사용하시겠습니까?************")
+                        println("  1. 사용\t 2. 취소")
                         // 쿠폰 사용 여부 선택
                         val oneOrTwo2 = choiceNumber("oneOrTwo").toString().toInt()
                         when (oneOrTwo2) {
                             // 사용 선택 시
                             1 -> {
-                                println("쿠폰 바코드 또는 큐알코드를 스캔해주세요.")
+                                println("*****쿠폰 바코드 또는 큐알코드를 스캔해주세요.****")
                                 println("(스캔 중)")
                                 // 20퍼센트 할인
                                 order.sum = (order.sum * 0.8).toInt()
                                 currentMoney -= order.sum
-                                println("20% 할인 쿠폰이 적용되었습니다.")
+                                println("*********20% 할인 쿠폰이 적용되었습니다.********")
                                 println("남은 잔액은 ${currentMoney}원입니다.")
                                 // 진행중인 주문 리스트에 추가
                                 proceedingOrderList.add(order)

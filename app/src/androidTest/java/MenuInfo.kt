@@ -19,7 +19,7 @@ object MenuInfo {
     // 음료 메뉴 정보
     val drinkInfo = arrayListOf(
         Food("코카콜라", 1600, "시원한 코카콜라"),
-        Food("사이", 1600, "시원한 사이다"),
+        Food("사이다", 1600, "시원한 사이다"),
         Food("제로콜라", 1600, "코카아니면 펩시")
     )
 
