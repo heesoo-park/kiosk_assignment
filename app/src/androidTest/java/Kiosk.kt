@@ -15,13 +15,13 @@ class Kiosk {
     // 메뉴 UI 객체
     val menuUI = MenuUI()
     // 주문 영수증 객체
-    var orderReceipt = OrderReceipt()
+    var order = Order()
     // 진행중인(준비중인) 주문 리스트 객체
-    val proceedingOrderList = mutableListOf<OrderReceipt>()
+    val proceedingOrderList = mutableListOf<Order>()
     // 배달 영수증 객체
-    var deliveryReceipt = DeliveryReceipt()
+    var delivery = Delivery()
     // 진행중인(준비중인) 배달 리스트 객체
-    val proceedingDeliveryList = mutableListOf<DeliveryReceipt>()
+    val proceedingDeliveryList = mutableListOf<Delivery>()
 
     // 사용자의 현재 잔액
     var currentMoney = (30000..50000).random() / 100 * 100
@@ -76,10 +76,10 @@ class Kiosk {
         // 기본적으로 메인 메뉴를 출력
         menuUI.mainMenu()
         // 조건이 맞을 때 주문 메뉴와 배달 메뉴를 출력
-        if (orderReceipt.receipt.isNotEmpty() || proceedingOrderList.isNotEmpty()) {
+        if (order.receipt.isNotEmpty() || proceedingOrderList.isNotEmpty()) {
             menuUI.orderMenu()
         }
-        if (deliveryReceipt.receipt.isNotEmpty() || proceedingDeliveryList.isNotEmpty()) {
+        if (delivery.receipt.isNotEmpty() || proceedingDeliveryList.isNotEmpty()) {
             menuUI.deliveryMenu()
         }
         print("-> ")
@@ -101,7 +101,7 @@ class Kiosk {
                 // 주문하기
                 5 -> {
                     // 주문 영수증이 비어있는 경우
-                    if (orderReceipt.receipt.isEmpty()) {
+                    if (order.receipt.isEmpty()) {
                         System.err.println("잘못된 입력입니다 다시 입력해주세요.")
                         break
                     } else {
@@ -113,7 +113,7 @@ class Kiosk {
                 6 -> {
                     // 진행중인 주문 리스트가 비어있는 경우
                     if (proceedingOrderList.isEmpty()) {
-                        if (orderReceipt.receipt.isNotEmpty()) {
+                        if (order.receipt.isNotEmpty()) {
                             println("현재 진행중인 주문 리스트는 없습니다.")
                             page_clearBasket()
                         } else {
@@ -121,7 +121,7 @@ class Kiosk {
                         }
                         break
                     } else {
-                        if (orderReceipt.receipt.isEmpty()) {
+                        if (order.receipt.isEmpty()) {
                             println("장바구니가 비어있습니다.")
                             page_cancelOrder()
                         } else {
@@ -219,7 +219,7 @@ class Kiosk {
                 // 확인을 누른 경우
                 1 -> {
                     // 해당 버거를 주문 영수증에 추가
-                    orderReceipt.addMenu(food)
+                    order.addMenu(food)
                     println("${food.name}가 장바구니에 추가되었습니다.\n")
                     break
                 }
@@ -236,7 +236,7 @@ class Kiosk {
     fun page_orderBasket() {
         println("***아래와 같이 주문 하시겠습니까?***")
         // 주문 영수증에 들어있는 메뉴들 전체 출력
-        orderReceipt.printOrders()
+        order.printOrders()
         println("  1. 주문\t 2. 메뉴판")
         print("-> ")
 
@@ -254,7 +254,7 @@ class Kiosk {
                         break
                     } else {
                         // 쿠폰이 있고 쿠폰 적용 조건에 맞는지 확인
-                        if (coupon && orderReceipt.sum >= 20000) {
+                        if (coupon && order.sum >= 20000) {
                             println("\n쿠폰을 사용하시겠습니까?")
                             println("사용하기를 원한다면 1을 눌러주세요.")
                             // 쿠폰 사용 여부 선택
@@ -263,7 +263,7 @@ class Kiosk {
                                 // 사용 선택 시
                                 1 -> {
                                     // 20퍼센트 할인
-                                    orderReceipt.sum = (orderReceipt.sum * 0.8).toInt()
+                                    order.sum = (order.sum * 0.8).toInt()
                                     // 쿠폰 제거
                                     coupon = false
                                 }
@@ -271,15 +271,15 @@ class Kiosk {
                         }
 
                         // 현재 잔액이 주문금액이 크다면
-                        if (currentMoney >= orderReceipt.sum) {
-                            currentMoney -= orderReceipt.sum
+                        if (currentMoney >= order.sum) {
+                            currentMoney -= order.sum
                             println("주문이 완료되었습니다.")
                             println("남은 잔액은 ${currentMoney}원입니다.")
                             // 진행중인 주문 리스트에 추가
-                            proceedingOrderList.add(orderReceipt)
-                            orderReceipt = OrderReceipt()
+                            proceedingOrderList.add(order)
+                            order = Order()
                         } else { // 현재 잔액이 주문금액이 작다면
-                            println("현재 잔액은 ${currentMoney}원으로 ${orderReceipt.sum - currentMoney}원이 부족해서 주문할 수 없습니다.")
+                            println("현재 잔액은 ${currentMoney}원으로 ${order.sum - currentMoney}원이 부족해서 주문할 수 없습니다.")
                             println("장바구니를 유지합니다.")
                         }
                         break
@@ -305,7 +305,7 @@ class Kiosk {
             when (oneOrTwo) {
                 // 비우는 걸 선택한 경우
                 1 -> {
-                    orderReceipt.clearMenu()
+                    order.clearMenu()
                     println("장바구니를 비웠습니다.")
                     break
                 }
@@ -409,7 +409,7 @@ class Kiosk {
             val type1 = (1..totalInfo.size).random()
             val type2 = (1..totalInfo[type1 - 1].info.size).random()
             // 해당 메뉴를 배달 영수증에 추가
-            deliveryReceipt.addMenu(totalInfo[type1 - 1].info[type2 - 1])
+            delivery.addMenu(totalInfo[type1 - 1].info[type2 - 1])
         }
 
         // 위도
@@ -417,11 +417,11 @@ class Kiosk {
         // 경도
         val longitude = round(Random.nextDouble(124.0, 132.0) * 100) / 100
         // 위도, 경도를 배달 영수증에 추가
-        deliveryReceipt.addPosition(altitude, longitude)
+        delivery.addPosition(altitude, longitude)
 
         // 배달 영수증을 배달리스트에 추가
-        proceedingDeliveryList.add(deliveryReceipt)
-        deliveryReceipt = DeliveryReceipt()
+        proceedingDeliveryList.add(delivery)
+        delivery = Delivery()
         println("\n<<<배달 주문이 들어왔습니다.>>>")
     }
 
