@@ -13,8 +13,10 @@ open class Menu(name: String, price: Int, desc: String) {
         this.desc = desc
     }
 
+    fun info() = "%-12s\t| %7s\t| %s".format(name, "W ${price}", desc)
+
     // 메뉴 하나에 대한 내용을 출력
     fun displayInfo() {
-        println("${name}\t | W ${price}\t | ${desc}")
+        println(info())
     }
 }
