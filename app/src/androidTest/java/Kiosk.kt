@@ -118,7 +118,11 @@ class Kiosk {
                 5 -> {
                     // 장바구니가 비어있는 경우
                     if (order.receipt.isEmpty()) {
-                        System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        if (proceedingOrderList.isNotEmpty()) {
+                            println("**********장바구니가 비워져 있습니다.***********")
+                        } else {
+                            System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        }
                         break
                     } else {
                         page_orderBasket()
