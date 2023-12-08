@@ -1,5 +1,5 @@
 // 주문 메뉴들을 모아 하나의 영수증 형태로 만드는 클래스
-// 하위 클래스에 OrderReceipt와 DeliveryReceipt가 있음
+// 하위 클래스에 Order와 Delivery가 있음
 // 상속을 위해 open 키워드 붙임
 open class Receipt {
     // 주문 메뉴들이 모여있는 영수증
@@ -13,7 +13,8 @@ open class Receipt {
         sum += food.price
     }
 
-    fun clearMenu() {
+    // 장바구니 비우기
+    fun clearBasket() {
         receipt.clear()
         sum = 0
     }
