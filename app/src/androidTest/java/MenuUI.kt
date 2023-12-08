@@ -18,7 +18,6 @@ class MenuUI {
     // 가장 기본적으로 출력되는 메인 메뉴
     fun mainMenu() {
         println("[맘스터치 메뉴 카테고리]")
-//        println("%-13s\t| %s".format("aaa", "bbb"))
         println("%-13s\t| %s".format("  1. 버거", "다양한 버거"))
         println("%-13s\t| %s".format("  2. 치킨", "다양한 치킨"))
         println("%-13s\t| %s".format("  3. 음료", "다양한 음료"))
