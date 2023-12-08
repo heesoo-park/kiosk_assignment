@@ -118,7 +118,11 @@ class Kiosk {
                 5 -> {
                     // 장바구니가 비어있는 경우
                     if (order.receipt.isEmpty()) {
-                        System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        if (proceedingOrderList.isNotEmpty()) {
+                            println("**********장바구니가 비워져 있습니다.***********")
+                        } else {
+                            System.err.println("잘못된 입력입니다 다시 입력해주세요.")
+                        }
                         break
                     } else {
                         page_orderBasket()
@@ -145,7 +149,7 @@ class Kiosk {
                         } else {
                             println("**********장바구니를 비우길 원하십니까?**********")
                             println("**********주문을 취소하기를 원하십니까?**********")
-                            println("  1. 장바구니 비우기\t 2. 주문 취소하기")
+                            println("  1. 장바구니 비우기    2. 주문 취소하기")
 
                             while (true) {
                                 // 추가할 지 선택
@@ -233,7 +237,7 @@ class Kiosk {
         food.displayInfo()
         println("=====================================================================================================")
         println("\n******위 메뉴를 장바구니에 추가하시겠습니까?*******")
-        println("  1. 확인\t 2. 취소")
+        println("  1. 확인    2. 취소")
         print("-> ")
 
         while (true) {
@@ -244,7 +248,7 @@ class Kiosk {
                 1 -> {
                     // 해당 음식을 주문 영수증에 추가
                     order.addMenu(food)
-                    println("%10s".format("${food.name}가 장바구니에 추가되었습니다.\n"))
+                    println("${food.name}가 장바구니에 추가되었습니다.\n")
                     break
                 }
                 // 취소를 누른 경우
@@ -263,7 +267,7 @@ class Kiosk {
         println("*********아래와 같이 주문 하시겠습니까?**********")
         // 장바구니에 들어있는 음식들 전체 출력
         order.printOrders()
-        println("  1. 주문\t 2. 메뉴판")
+        println("  1. 주문    2. 메뉴판")
         print("-> ")
 
         while (true) {
@@ -280,7 +284,7 @@ class Kiosk {
                         break
                     } else if (coupon && order.sum >= 20000) {
                         println("\n************쿠폰을 사용하시겠습니까?************")
-                        println("  1. 사용\t 2. 취소")
+                        println("  1. 사용    2. 취소")
                         // 쿠폰 사용 여부 선택
                         val oneOrTwo2 = choiceNumber("oneOrTwo").toString().toInt()
                         when (oneOrTwo2) {
@@ -336,7 +340,7 @@ class Kiosk {
      */
     fun page_clearBasket() {
         println("*********장바구니를 비우기를 원하십니까?*********")
-        println("  1. 예\t 2. 아니요")
+        println("  1. 예    2. 아니요")
 
         while (true) {
             // 비울지 선택
@@ -380,7 +384,7 @@ class Kiosk {
                     while (true) {
                         // 취소에 대한 재확인
                         println("***정말로 [ 주문 ${selectedOption.toInt()} ]을 취소하시겠습니까?***")
-                        println("  1. 확인\t 2. 취소")
+                        println("  1. 확인    2. 취소")
 
                         // 취소 결정
                         val oneOrTwo = choiceNumber("oneOrTwo").toString().toInt()
