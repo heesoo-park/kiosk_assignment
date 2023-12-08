@@ -26,7 +26,7 @@ open class Receipt {
         println("[ 장바구니 ]")
         println("=====================================================================================================")
         receipt.forEachIndexed { index, it ->
-            println("${index + 1}. ${it.name}\t | ${it.price} | ${it.desc}")
+            println("%d. %-8s\t| %7s\t| %s".format(index + 1, it.name, it.price, it.desc))
         }
         println("=====================================================================================================")
 
@@ -39,7 +39,7 @@ open class Receipt {
     open fun printProceedingOrders(num: Int) {
         println("[ 주문 ${num} ]")
         receipt.forEachIndexed { index, it ->
-            println("${index + 1}. ${it.name}\t | ${it.price} | ${it.desc}")
+            println("%d. %-8s\t| %7s\t| %s".format(index + 1, it.name, it.price, it.desc))
         }
         println()
     }
